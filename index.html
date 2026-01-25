@@ -3,7 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta name="theme-color" content="#030508">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta property="og:title" content="EDIMARK | Neo-System Pro">
+    <meta property="og:description" content="Protocolo Digital de Servicio Técnico Especializado.">
+    <meta property="og:image" content="logo.png"> <meta property="og:type" content="website">
+
     <title>EDIMARK | Pro-System</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
@@ -16,9 +26,9 @@
             --texto: #d1d9e0;
         }
 
+        /* --- ESTILOS GENERALES (Mantenidos y optimizados) --- */
         body { margin: 0; font-family: 'Orbitron', sans-serif; background: var(--fondo); color: var(--texto); overflow-x: hidden; font-size: 14px; }
 
-        /* --- LOADER --- */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--fondo); z-index: 9999;
@@ -35,7 +45,6 @@
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes flip { 0%, 100% { transform: rotateY(0deg); } 50% { transform: rotateY(360deg); } }
 
-        /* --- BARRA PROGRESO --- */
         #download-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); z-index: 8000;
@@ -44,7 +53,6 @@
         .p-bar-bg { width: 250px; height: 4px; background: #111; border: 1px solid var(--neon-azul); margin-top: 15px; }
         .p-bar-fill { width: 0%; height: 100%; background: var(--neon-azul); box-shadow: 0 0 10px var(--neon-azul); }
 
-        /* --- UI --- */
         .container { max-width: 800px; margin: auto; padding: 15px; display: none; }
         .card { 
             background: var(--tarjeta); border-radius: 12px; padding: 25px; 
@@ -66,7 +74,7 @@
         .btn-save { background: var(--neon-rosa); color: white; }
         .btn-pdf { background: transparent; color: var(--neon-azul); border: 1px solid var(--neon-azul); }
 
-        /* --- PDF PRINT OVERRIDES --- */
+        /* --- ESTILOS PDF --- */
         .pdf-carta {
             background-color: #030508 !important;
             width: 215.9mm !important;
@@ -77,7 +85,6 @@
         }
         .pdf-carta .watermark-pdf { opacity: 0.12 !important; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); width: 450px; pointer-events: none; }
         .pdf-carta * { color: #fff !important; }
-        .pdf-carta input-pdf { color: var(--neon-azul) !important; font-weight: bold; }
 
         .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 350px; opacity: 0.03; pointer-events: none; }
         .hist-item { background: #07090d; padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; border: 1px solid #141b24; align-items: center; font-size: 11px; }
@@ -161,6 +168,7 @@
 </div>
 
 <script>
+    // --- LÓGICA DE CARGA ---
     window.addEventListener('load', () => {
         setTimeout(() => {
             document.getElementById('loader').style.display = 'none';
@@ -204,7 +212,7 @@
         for(let i = 0; i <= 100; i += 20) {
             bar.style.width = i + '%';
             document.getElementById('p-text').innerText = i + '%';
-            await new Promise(r => setTimeout(r, 100));
+            await new Promise(r => setTimeout(r, 80));
         }
 
         const pdfClone = element.cloneNode(true);
@@ -217,7 +225,6 @@
             const span = document.createElement('span');
             span.innerText = inp.value || "---";
             span.style.color = "#00eaff";
-            span.style.fontSize = "14px";
             inp.replaceWith(span);
         });
 
@@ -229,13 +236,8 @@
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
 
-        // Generar y abrir/descargar
         const worker = html2pdf().set(opt).from(pdfClone);
-        
-        // Esto descarga el archivo
         worker.save();
-        
-        // Esto abre la ventana de previsualización/impresión
         worker.toPdf().output('bloburl').then((url) => {
             overlay.style.display = 'none';
             window.open(url, '_blank');

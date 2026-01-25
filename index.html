@@ -9,54 +9,55 @@
         :root { --azul: #00eaff; --rosa: #ff2fd0; --fondo: #0b0f1a; --card: #161b33; }
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--fondo); color: white; padding: 10px; }
         .container { max-width: 500px; margin: auto; }
-        .card { background: var(--card); border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
+        .card { background: var(--card); border-radius: 15px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
         
         input { width: 100%; padding: 12px; background: #0b0f1a; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; font-size: 16px; margin-bottom: 8px; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 10px; position: relative; z-index: 1; table-layout: fixed; }
         th { color: var(--rosa); font-size: 11px; text-transform: uppercase; padding: 5px; border-bottom: 1px solid #333; }
-        td { padding: 5px; word-wrap: break-word; }
+        td { padding: 5px; word-wrap: break-word; font-size: 14px; }
 
-        .btn { border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; font-size: 14px; text-transform: uppercase; }
+        .btn { border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; font-size: 14px; text-transform: uppercase; }
         .btn-save { background: #27ae60; color: white; }
+        .btn-print { background: #2980b9; color: white; }
         .btn-pdf { background: white; color: black; border: 2px solid var(--azul); }
 
         /* --- MARCA DE AGUA VERTICAL Y CENTRADA --- */
         .watermark {
             display: none;
             position: absolute;
-            top: 55%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* Sin rotación diagonal */
-            width: 250px;
-            opacity: 0.12;
-            z-index: 0;
-            pointer-events: none;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 220px; opacity: 0.12; z-index: 0; pointer-events: none;
         }
 
-        /* --- AJUSTE EXACTO PARA PDF 80MM --- */
-        #area-nota.modo-pdf {
+        /* --- AJUSTE ESTRICTO PARA PDF Y TICKET --- */
+        #area-nota.modo-exportacion {
             background: white !important;
             color: black !important;
-            width: 80mm !important;
-            padding: 5mm !important;
-            margin: 0 !important;
+            width: 72mm !important; /* Ligeramente menor a 80mm para evitar cortes laterales */
+            padding: 2mm !important;
+            margin: 0 auto !important;
             display: block !important;
+            box-sizing: border-box !important;
         }
-        .modo-pdf * { color: black !important; text-shadow: none !important; font-size: 11px !important; }
-        .modo-pdf h2 { font-size: 22px !important; }
-        .modo-pdf input { border: none !important; background: transparent !important; font-weight: bold; padding: 0; margin: 0; height: auto; }
-        .modo-pdf .watermark { display: block !important; }
-        .modo-pdf .no-print { display: none !important; }
-        .modo-pdf th, .modo-pdf td { border: 0.5px solid #ccc !important; }
+        .modo-exportacion * { color: black !important; text-shadow: none !important; }
+        .modo-exportacion input { border: none !important; background: transparent !important; font-weight: bold; padding: 0; margin: 0; }
+        .modo-exportacion .watermark { display: block !important; }
+        .modo-exportacion .no-print { display: none !important; }
+        .modo-exportacion table, .modo-exportacion th, .modo-exportacion td { border: 1px solid #eee !important; }
 
-        .historial-item { background: #1c223d; padding: 12px; border-radius: 8px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--azul); }
+        .historial-item { background: #1c223d; padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--azul); }
 
+        /* CONFIGURACIÓN DE IMPRESIÓN FÍSICA */
         @media print {
-            .no-print { display: none !important; }
-            body { background: white; padding: 0; }
-            .card { width: 80mm; box-shadow: none; color: black; background: white !important; padding: 4mm !important; }
+            @page { size: 80mm auto; margin: 0; }
+            body { background: white; }
+            .no-print, .btn { display: none !important; }
+            .container { width: 100%; padding: 0; margin: 0; }
+            .card { width: 80mm; padding: 4mm; box-shadow: none; background: white !important; color: black !important; }
             .watermark { display: block !important; }
+            * { -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -64,28 +65,28 @@
 
 <div class="container">
     <div class="card" id="area-nota">
-        <img src="logo.png" class="watermark" id="watermark">
+        <img src="logo.png" class="watermark">
 
-        <div style="text-align: center; margin-bottom: 15px; position: relative; z-index: 1;">
-            <h2 style="margin:0; color:var(--azul); font-size: 26px;">EDIMARK</h2>
+        <div style="text-align: center; margin-bottom: 10px; position: relative; z-index: 1;">
+            <h2 style="margin:0; color:var(--azul); font-size: 24px;">EDIMARK</h2>
             <div style="font-size: 10px; letter-spacing: 2px;">SOLUCIONES TECNOLÓGICAS</div>
-            <div style="margin-top:10px; border-top: 1px dashed #555; padding-top: 10px;">
-                <b>FOLIO: <span id="folio" style="color:var(--rosa)"></span></b><br>
+            <div style="margin-top:8px; border-top: 1px dashed #555; padding-top: 8px;">
+                <b>FOLIO: <span id="folio" style="color:var(--rosa)"></span></b> | 
                 <span id="fechaActual"></span>
             </div>
         </div>
 
         <div style="position: relative; z-index: 1;">
-            <input id="cliente" placeholder="Nombre del Cliente">
+            <input id="cliente" placeholder="Cliente">
             <div style="display:flex; gap:5px">
                 <input id="modelo" placeholder="Modelo">
-                <input id="imei" placeholder="IMEI / Serie">
+                <input id="imei" placeholder="IMEI">
             </div>
 
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 50%;">Servicio</th>
+                        <th style="width: 50%; text-align: left;">Servicio</th>
                         <th style="width: 15%;">Cant</th>
                         <th style="width: 35%;">$ Total</th>
                         <th class="no-print" style="width: 10%;"></th>
@@ -94,36 +95,40 @@
                 <tbody id="conceptos"></tbody>
             </table>
 
-            <button class="btn no-print" style="background:#333; color:white; padding:10px" onclick="agregarItem()">+ AGREGAR SERVICIO</button>
+            <button class="btn no-print" style="background:#333; color:white; padding:8px" onclick="agregarItem()">+ AGREGAR SERVICIO</button>
 
-            <div style="text-align: right; margin-top: 15px; border-top: 2px solid #333; padding-top: 10px;">
-                <div class="no-print" style="font-size:12px; margin-bottom:5px;">
+            <div style="text-align: right; margin-top: 12px; border-top: 2px solid #333; padding-top: 8px;">
+                <div class="no-print" style="font-size:11px;">
                     <label><input type="checkbox" id="iva" onchange="calcular()" style="width:auto"> IVA (16%)</label>
                 </div>
-                <b style="font-size: 24px;">TOTAL: $<span id="total">0.00</span></b>
+                <b style="font-size: 22px;">TOTAL: $<span id="total">0.00</span></b>
             </div>
 
-            <div style="margin-top: 25px; font-size: 10px; text-align: center; opacity: 0.8; line-height: 1.2;">
+            <div style="margin-top: 20px; font-size: 9px; text-align: center; opacity: 0.8; line-height: 1.2;">
                 * EQUIPOS MOJADOS NO TIENEN GARANTÍA *<br>
                 * DESPUÉS DE 30 DÍAS NO HAY RESPONSABILIDAD *<br>
-                <b>¡GRACIAS POR TU PREFERENCIA!</b>
+                <b>¡GRACIAS POR SU PREFERENCIA!</b>
             </div>
         </div>
 
-        <div class="no-print" style="margin-top: 20px;">
-            <button class="btn btn-save" onclick="guardarCompleto()">💾 GUARDAR TICKET</button>
-            <button class="btn btn-pdf" onclick="generarTicketPDF()">📄 DESCARGAR PDF TICKET</button>
+        <div class="no-print" style="margin-top: 15px;">
+            <button class="btn btn-save" onclick="guardarCompleto()">💾 GUARDAR</button>
+            <button class="btn btn-print" onclick="imprimirFisico()">🎫 IMPRIMIR TICKET</button>
+            <button class="btn btn-pdf" onclick="generarTicketPDF()">📄 DESCARGAR PDF</button>
         </div>
     </div>
 
     <div class="card no-print" style="margin-top: 20px;">
-        <h4 style="margin:0; color:var(--azul)">HISTORIAL DE TICKETS</h4>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h4 style="margin:0; color:var(--azul)">HISTORIAL</h4>
+            <button onclick="borrarHistorial()" style="background:none; border:none; color:var(--rosa); font-size:10px; cursor:pointer;">BORRAR TODO</button>
+        </div>
         <div id="historial"></div>
     </div>
 </div>
 
 <script>
-    let folioActual = parseInt(localStorage.getItem("folio_vFinal")) || 1;
+    let folioActual = parseInt(localStorage.getItem("folio_edimark_final")) || 1;
     document.getElementById("folio").innerText = String(folioActual).padStart(4, '0');
     document.getElementById("fechaActual").innerText = new Date().toLocaleDateString();
 
@@ -149,30 +154,33 @@
         document.getElementById("total").innerText = t.toFixed(2);
     }
 
+    function imprimirFisico() {
+        window.print();
+    }
+
     function generarTicketPDF() {
         const element = document.getElementById("area-nota");
         const cliente = document.getElementById("cliente").value || "Cliente";
         
-        element.classList.add("modo-pdf");
+        element.classList.add("modo-exportacion");
         
-        // Calculamos altura dinámica para evitar cortes longitudinales
-        const altoEnMm = (element.scrollHeight * 0.2645) + 15;
+        // Calculamos altura dinámica real
+        const altoEnMm = (element.scrollHeight * 0.2645) + 10;
 
         const opt = {
             margin: 0,
-            filename: `EDIMARK_${folioActual}_${cliente}.pdf`,
+            filename: `Ticket_${folioActual}_${cliente}.pdf`,
             image: { type: 'jpeg', quality: 1 },
             html2canvas: { 
-                scale: 3, 
+                scale: 2, 
                 useCORS: true,
-                width: 302, // Forza el ancho de captura a ~80mm
-                windowWidth: 302
+                width: 302 // Forzado a 80mm en resolución de pantalla
             },
             jsPDF: { unit: 'mm', format: [80, altoEnMm], orientation: 'portrait' }
         };
 
         html2pdf().set(opt).from(element).save().then(() => {
-            element.classList.remove("modo-pdf");
+            element.classList.remove("modo-exportacion");
         });
     }
 
@@ -193,49 +201,52 @@
             servicios: items
         };
 
-        const historial = JSON.parse(localStorage.getItem("historial_vFinal") || "[]");
+        const historial = JSON.parse(localStorage.getItem("historial_edimark") || "[]");
         historial.push(nota);
-        localStorage.setItem("historial_vFinal", JSON.stringify(historial));
-        localStorage.setItem("folio_vFinal", ++folioActual);
+        localStorage.setItem("historial_edimark", JSON.stringify(historial));
+        localStorage.setItem("folio_edimark_final", ++folioActual);
         
         alert("¡Ticket guardado!");
         location.reload();
     }
 
     function cargarHistorial() {
-        const historial = JSON.parse(localStorage.getItem("historial_vFinal") || "[]");
+        const historial = JSON.parse(localStorage.getItem("historial_edimark") || "[]");
         const container = document.getElementById("historial");
-        
         if (historial.length === 0) {
-            container.innerHTML = "<small style='opacity:0.5'>No hay tickets guardados.</small>";
+            container.innerHTML = "<small style='opacity:0.5'>Vacio</small>";
             return;
         }
-
         container.innerHTML = historial.reverse().slice(0, 10).map(n => `
             <div class="historial-item">
-                <div style="font-size:12px"><b>#${String(n.folio).padStart(4,'0')}</b> - ${n.cliente}<br><small>${n.fecha}</small></div>
+                <div style="font-size:11px"><b>#${String(n.folio).padStart(4,'0')}</b><br>${n.cliente}</div>
                 <div style="text-align:right">
                     <b style="color:var(--azul)">$${n.total}</b><br>
-                    <button onclick="recargarTicket(${n.folio})" style="font-size:10px; margin-top:5px; background:#333; color:white; border:1px solid #555; padding:3px 8px; border-radius:4px;">RECARGAR</button>
+                    <button onclick="recargarTicket(${n.folio})" style="font-size:9px; background:#333; color:white; border:1px solid #555; padding:2px 5px; border-radius:4px;">VER</button>
                 </div>
             </div>
         `).join('');
     }
 
     function recargarTicket(f) {
-        const historial = JSON.parse(localStorage.getItem("historial_vFinal") || "[]");
+        const historial = JSON.parse(localStorage.getItem("historial_edimark") || "[]");
         const n = historial.find(x => x.folio == f);
         if(!n) return;
-
-        document.getElementById("folio").innerText = String(n.folio).padStart(4, '0');
         document.getElementById("cliente").value = n.cliente;
         document.getElementById("modelo").value = n.modelo;
         document.getElementById("imei").value = n.imei;
-        
+        document.getElementById("folio").innerText = String(n.folio).padStart(4, '0');
         const tbody = document.getElementById("conceptos");
         tbody.innerHTML = "";
         n.servicios.forEach(s => agregarItem(s.desc, s.cant, s.prec));
-        alert("Datos del ticket #" + f + " cargados.");
+        window.scrollTo(0,0);
+    }
+
+    function borrarHistorial() {
+        if(confirm("¿Borrar todo el historial?")) {
+            localStorage.clear();
+            location.reload();
+        }
     }
 
     window.onload = () => {

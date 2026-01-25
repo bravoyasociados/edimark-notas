@@ -1,349 +1,181 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EDIMARK | Nota de Remisión</title>
+    <meta charset="UTF-8">
+    <title>EDIMARK | Sistema de Tickets</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root{ --azul:#00eaff; --rosa:#ff2fd0; --fondo:#0b0f1a; }
+        body{ margin:0; font-family: 'Segoe UI', sans-serif; background:var(--fondo); color:white; }
+        .container{ max-width:1000px; margin:auto; padding:20px; }
+        .card{ background:#11162a; border-radius:12px; padding:20px; box-shadow:0 0 15px rgba(0,234,255,.2); position: relative; }
+        h1{ text-align:center; color:var(--azul); margin: 0; }
+        input{ width:100%; padding:8px; background:#0b0f1a; border:1px solid #333; color:white; border-radius:6px; margin-bottom:8px; box-sizing: border-box; }
+        table{ width:100%; border-collapse:collapse; margin-top:10px; }
+        th,td{ border:1px solid #333; padding:6px; text-align:center; }
+        button{ background:linear-gradient(90deg,var(--azul),var(--rosa)); border:none; padding:10px; color:black; border-radius:6px; cursor:pointer; font-weight:bold; margin: 5px; }
+        .no-print { display: block; }
+        
+        /* ESTILO PARA EL PDF (Solo se activa al exportar) */
+        .modo-ticket {
+            background: white !important;
+            color: black !important;
+            padding: 5mm !important;
+            width: 80mm !important;
+        }
+        .modo-ticket * { color: black !important; text-shadow: none !important; }
+        .modo-ticket input { border: none !important; background: transparent !important; }
 
-<style>
-:root{
-    --azul:#00eaff;
-    --rosa:#ff2fd0;
-    --fondo:#0b0f1a;
-}
-body{
-    margin:0;
-    font-family: 'Segoe UI', sans-serif;
-    background:var(--fondo);
-    color:white;
-}
-.container{
-    max-width:1000px;
-    margin:auto;
-    padding:20px;
-}
-.card{
-    background:#11162a;
-    border-radius:12px;
-    padding:20px;
-    box-shadow:0 0 15px rgba(0,234,255,.2);
-}
-h1{
-    text-align:center;
-    color:var(--azul);
-    text-shadow:0 0 10px var(--azul);
-}
-label{
-    font-size:14px;
-    color:#ccc;
-}
-input, textarea{
-    width:100%;
-    padding:10px;
-    background:#0b0f1a;
-    border:1px solid #333;
-    color:white;
-    border-radius:6px;
-    margin-bottom:10px;
-}
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:10px;
-}
-th,td{
-    border:1px solid #333;
-    padding:8px;
-    text-align:center;
-}
-th{
-    color:var(--rosa);
-}
-button{
-    background:linear-gradient(90deg,var(--azul),var(--rosa));
-    border:none;
-    padding:10px 15px;
-    color:black;
-    border-radius:6px;
-    cursor:pointer;
-    font-weight:bold;
-}
-button:hover{
-    opacity:.8;
-}
-.total{
-    text-align:right;
-    font-size:18px;
-}
-.neon{
-    color:var(--rosa);
-    text-shadow:0 0 10px var(--rosa);
-}
-@media print{
-    button, .no-print{display:none;}
-    body{background:white;color:black;}
-}
-/* =========================
-   DISEÑO FORMAL PARA LA NOTA
-   ========================= */
-@media print {
-
-  body {
-    background: white !important;
-    color: black !important;
-    font-size: 12px;
-  }
-
-  .container {
-    max-width: 100%;
-    padding: 0;
-  }
-
-  .card {
-    background: white !important;
-    box-shadow: none;
-    border-radius: 0;
-    padding: 20px;
-  }
-
-  h1 {
-    color: black !important;
-    text-shadow: none;
-    font-size: 22px;
-    text-align: left;
-  }
-
-  .neon {
-    color: black !important;
-    text-shadow: none;
-  }
-
-  table {
-    margin-top: 15px;
-  }
-
-  th {
-    color: black !important;
-    background: #f0f0f0;
-    font-weight: bold;
-  }
-
-  td, th {
-    border: 1px solid #000;
-    padding: 6px;
-    font-size: 11px;
-  }
-
-  input, textarea {
-    border: none;
-    padding: 0;
-    background: transparent;
-    color: black;
-    font-size: 11px;
-  }
-
-  .total {
-    margin-top: 15px;
-    font-size: 12px;
-  }
-
-  .total strong {
-    font-size: 14px;
-  }
-
-  button,
-  .no-print {
-    display: none !important;
-  }
-
-  /* Encabezado tipo documento */
-  .nota-header {
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 2px solid #000;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-  }
-
-  .nota-header div {
-    font-size: 11px;
-  }
-
-}
-</style>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#00eaff">
+        .watermark {
+            display: none;
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            width: 200px; opacity: 0.1; z-index: 0;
+        }
+        
+        @media print {
+            @page { size: 80mm auto; margin: 0; }
+            .no-print, button { display: none !important; }
+            body { background: white !important; }
+            .card { box-shadow: none !important; width: 80mm !important; padding: 2mm !important; background: white !important; color: black !important;}
+            #logoDoc { display: block !important; margin: 0 auto 10px auto; width: 140px; }
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
-<div class="card">
+    <div class="card" id="area-nota">
+        <center><img src="logo.png" id="logoDoc" style="width:150px; display:none;"></center>
+        <img src="logo.png" id="watermark" class="watermark">
 
-<div class="nota-header">
-  <div>
-    <h1>EDIMARK</h1>
-    <div>Reparación de Celulares</div>
-  </div>
+        <div style="text-align:center">
+            <h1 class="no-print">EDIMARK</h1>
+            <div style="font-size:12px; font-weight:bold">SOLUCIONES TECNOLÓGICAS</div>
+            <p>Folio: <span id="folio" style="color:var(--rosa)"></span> | <span id="fechaPrint"></span></p>
+        </div>
 
-  <div>
-    <strong>NOTA DE REMISIÓN</strong><br>
-    Folio: <span id="folio"></span><br>
-    Fecha: <span id="fechaPrint"></span>
-  </div>
-</div>
+        <div style="position:relative; z-index:1">
+            <input id="cliente" placeholder="Cliente">
+            <div style="display:flex; gap:5px">
+                <input id="modelo" placeholder="Modelo">
+                <input id="imei" placeholder="IMEI">
+            </div>
+        </div>
 
+        <table id="tabla-servicios">
+            <thead>
+                <tr><th>Servicio</th><th>Cant</th><th>$</th><th class="no-print"></th></tr>
+            </thead>
+            <tbody id="conceptos"></tbody>
+        </table>
 
-<label>Fecha</label>
-<input type="date" id="fecha">
-<label>Cliente</label>
-<input id="cliente">
+        <button class="no-print" onclick="agregar()">+ Agregar</button>
 
-<h3 class="neon">Conceptos</h3>
+        <div style="text-align:right; margin-top:10px">
+            <div class="no-print"><label><input type="checkbox" id="iva" onchange="calcular()"> IVA 16%</label></div>
+            <b>Total: $<span id="total">0.00</span></b>
+        </div>
 
-<table>
-<thead>
-<tr>
-<th>Descripción</th>
-<th>Cantidad</th>
-<th>Precio</th>
-<th>Importe</th>
-<th>X</th>
-</tr>
-</thead>
-<tbody id="conceptos"></tbody>
-</table>
+        <div style="margin-top:20px; font-size:10px; text-align:center; border-top:1px dashed #ccc; padding-top:10px">
+            * Garantía de 30 días en hardware *
+        </div>
 
-<button onclick="agregar()">Agregar concepto</button>
+        <div class="no-print" style="margin-top:20px; text-align:center">
+            <button onclick="guardar()" style="background:#27ae60; color:white">GUARDAR</button>
+            <button onclick="imprimir()" style="background:#2980b9; color:white">IMPRIMIR</button>
+            <button onclick="generarPDF()" style="background:black; color:var(--azul); border:1px solid var(--azul)">PDF TICKET</button>
+        </div>
+    </div>
 
-<br><br>
-<label><input type="checkbox" id="iva" onchange="calcular()"> Incluir IVA (16%)</label>
-
-<div class="total">
-Subtotal: $<span id="subtotal">0.00</span><br>
-IVA: $<span id="ivaMonto">0.00</span><br>
-<strong>Total: $<span id="total">0.00</span></strong>
-</div>
-
-<br>
-<button onclick="guardar()">Guardar nota</button>
-<button onclick="window.print()">Exportar / PDF</button>
-
-</div>
-
-<div class="card no-print" style="margin-top:20px">
-<h3 class="neon">Historial</h3>
-<input placeholder="Buscar por cliente" oninput="buscar(this.value)">
-<div id="historial"></div>
-</div>
-
+    <div class="card no-print" style="margin-top:20px">
+        <h3>Historial</h3>
+        <div id="historial"></div>
+    </div>
 </div>
 
 <script>
-let folio = localStorage.getItem("folio") || 1;
-document.getElementById("folio").innerText = "EDM-" + String(folio).padStart(4,"0");
-fecha.valueAsDate = new Date();
+    let folio = localStorage.getItem("folio") || 1;
+    document.getElementById("folio").innerText = "EDM-" + String(folio).padStart(4,"0");
 
-function agregar(){
-    const tr = document.createElement("tr");
-    tr.innerHTML=`
-    <td><input></td>
-    <td><input type="number" value="1" oninput="calcular()"></td>
-    <td><input type="number" value="0" step="0.01" oninput="calcular()"></td>
-    <td>$0.00</td>
-    <td><button onclick="this.closest('tr').remove();calcular()">X</button></td>
-    `;
-    conceptos.appendChild(tr);
-}
+    function agregar(d="", c=1, p=0){
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td><input value="${d}"></td><td><input type="number" value="${c}" oninput="calcular()"></td><td><input type="number" value="${p}" oninput="calcular()"></td><td class="no-print"><button onclick="this.closest('tr').remove();calcular()" style="background:red; color:white">X</button></td>`;
+        document.getElementById("conceptos").appendChild(tr);
+        calcular();
+    }
 
-function calcular(){
-    let subtotal=0;
-    document.querySelectorAll("#conceptos tr").forEach(tr=>{
-        const c = tr.children[1].children[0].value;
-        const p = tr.children[2].children[0].value;
-        const imp = c*p;
-        tr.children[3].innerText="$"+imp.toFixed(2);
-        subtotal+=imp;
-    });
-    let ivaMonto = iva.checked ? subtotal*0.16 : 0;
-    subtotalSpan.innerText=subtotal.toFixed(2);
-    ivaMontoSpan.innerText=ivaMonto.toFixed(2);
-    totalSpan.innerText=(subtotal+ivaMonto).toFixed(2);
-}
-const subtotalSpan=subtotal;
-const ivaMontoSpan=ivaMonto;
-const totalSpan=total;
+    function calcular(){
+        let t = 0;
+        document.querySelectorAll("#conceptos tr").forEach(tr => {
+            t += tr.children[1].querySelector('input').value * tr.children[2].querySelector('input').value;
+        });
+        if(document.getElementById("iva").checked) t *= 1.16;
+        document.getElementById("total").innerText = t.toFixed(2);
+    }
 
-function guardar(){
-    const notas = JSON.parse(localStorage.getItem("notas")||"[]");
-    notas.push({
-        folio: folio,
-        cliente: cliente.value,
-        html: document.querySelector(".card").innerHTML
-    });
-    localStorage.setItem("notas",JSON.stringify(notas));
-    localStorage.setItem("folio",++folio);
-    location.reload();
-}
+    function imprimir(){
+        document.getElementById("logoDoc").style.display = "block";
+        window.print();
+        document.getElementById("logoDoc").style.display = "none";
+    }
 
-function cargarHistorial(){
-    const notas = JSON.parse(localStorage.getItem("notas")||"[]");
-    historial.innerHTML="";
-    notas.forEach(n=>{
-        historial.innerHTML+=`
-        <div>
-        <strong>EDM-${String(n.folio).padStart(4,"0")}</strong> - ${n.cliente}
-        <button onclick="reimprimir(${n.folio})">Reimprimir</button>
-        </div>`;
-    });
-}
-function buscar(txt){
-    const notas = JSON.parse(localStorage.getItem("notas")||"[]");
-    historial.innerHTML="";
-    notas.filter(n=>n.cliente.toLowerCase().includes(txt.toLowerCase()))
-    .forEach(n=>{
-        historial.innerHTML+=`
-        <div>
-        <strong>EDM-${String(n.folio).padStart(4,"0")}</strong> - ${n.cliente}
-        <button onclick="reimprimir(${n.folio})">Reimprimir</button>
-        </div>`;
-    });
-}
-function reimprimir(f){
-    const notas = JSON.parse(localStorage.getItem("notas"));
-    const nota = notas.find(n=>n.folio==f);
-    document.body.innerHTML=nota.html;
-    window.print();
-    location.reload();
-}
-cargarHistorial();
-</script>
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
-}
-</script>
-<script>
-const inputFecha = document.getElementById("fecha");
-const fechaPrint = document.getElementById("fechaPrint");
+    function generarPDF() {
+        const element = document.getElementById("area-nota");
+        const logo = document.getElementById("logoDoc");
+        const mark = document.getElementById("watermark");
 
-inputFecha.addEventListener("change", () => {
-  if (!inputFecha.value) return;
+        // Preparar vista
+        element.classList.add("modo-ticket");
+        logo.style.display = "block";
+        mark.style.display = "block";
 
-  const fecha = new Date(inputFecha.value + "T00:00:00");
+        const opciones = {
+            margin: 0,
+            filename: `EDIMARK_${folio}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 3, useCORS: true },
+            jsPDF: { unit: 'mm', format: [80, 200], orientation: 'portrait' }
+        };
 
-  fechaPrint.textContent = fecha.toLocaleDateString("es-MX", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric"
-  });
-});
-</script>
-<script>
-window.addEventListener("load", () => {
-  inputFecha.valueAsDate = new Date();
-  inputFecha.dispatchEvent(new Event("change"));
-});
+        // El truco del save() mejorado
+        html2pdf().set(opciones).from(element).toPdf().get('pdf').save().then(() => {
+            element.classList.remove("modo-ticket");
+            logo.style.display = "none";
+            mark.style.display = "none";
+        });
+    }
+
+    function guardar(){
+        const notas = JSON.parse(localStorage.getItem("notas") || "[]");
+        const items = [];
+        document.querySelectorAll("#conceptos tr").forEach(tr => {
+            items.push({d: tr.children[0].querySelector('input').value, c: tr.children[1].querySelector('input').value, p: tr.children[2].querySelector('input').value});
+        });
+        notas.push({folio, cliente: document.getElementById("cliente").value, total: document.getElementById("total").innerText, items});
+        localStorage.setItem("notas", JSON.stringify(notas));
+        localStorage.setItem("folio", ++folio);
+        location.reload();
+    }
+
+    function cargarHistorial(){
+        const notas = JSON.parse(localStorage.getItem("notas") || "[]");
+        document.getElementById("historial").innerHTML = notas.reverse().map(n => `<div style="border-bottom:1px solid #333; padding:8px; display:flex; justify-content:space-between"><span>#${n.folio} - ${n.cliente}</span><button onclick="reimprimir(${n.folio})">Reimprimir</button></div>`).join('');
+    }
+
+    function reimprimir(id){
+        const n = JSON.parse(localStorage.getItem("notas")).find(x => x.folio == id);
+        document.getElementById("cliente").value = n.cliente;
+        document.getElementById("conceptos").innerHTML = "";
+        n.items.forEach(i => agregar(i.d, i.c, i.p));
+        imprimir();
+    }
+
+    window.onload = () => {
+        document.getElementById("fechaPrint").innerText = new Date().toLocaleDateString();
+        cargarHistorial();
+    };
 </script>
 </body>
 </html>

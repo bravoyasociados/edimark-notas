@@ -57,13 +57,11 @@
             display: inline-block;
         }
 
-        /* Parpadeo de neón */
         @keyframes flicker {
             0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
             20%, 24%, 55% { opacity: 0.3; }
         }
 
-        /* Efecto de Caída y Rebote */
         .drop-bounce {
             animation: dropBounce 1s cubic-bezier(0.36, 0, 0.66, -0.56) forwards !important;
         }
@@ -105,7 +103,7 @@
         .btn-save { background: var(--neon-rosa); color: white; }
         .btn-pdf { background: transparent; color: var(--neon-azul); border: 1px solid var(--neon-azul); }
 
-        /* PDF CARTA ESTILO */
+        /* --- PDF ESTILO PREMIUM --- */
         .pdf-carta {
             background-color: #030508 !important;
             width: 215.9mm !important;
@@ -114,9 +112,20 @@
             box-sizing: border-box !important;
             border: 4px solid var(--neon-azul) !important;
         }
+        .pdf-carta .watermark { 
+            opacity: 0.25 !important; 
+            width: 500px !important;
+            filter: grayscale(0) brightness(1.2) !important;
+        }
         .pdf-carta * { color: #fff !important; }
-        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 350px; opacity: 0.03; pointer-events: none; }
+
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 350px; opacity: 0.03; pointer-events: none; transition: 0.3s; }
         .hist-item { background: #07090d; padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; border: 1px solid #141b24; align-items: center; font-size: 11px; }
+    
+        /* Estilos para el desglose */
+        .totals-container { text-align: right; margin-top: 30px; }
+        .total-row { margin-bottom: 5px; font-size: 12px; opacity: 0.8; }
+        .total-final { font-size: 32px; color: var(--neon-rosa); text-shadow: 0 0 10px rgba(255,0,123,0.3); }
     </style>
 </head>
 <body>
@@ -175,12 +184,18 @@
                 * NO APLICA EN EQUIPOS MOJADOS.<br>
                 * DOCUMENTO DIGITAL OFICIAL.
             </div>
-            <div style="text-align: right;">
-                <div class="no-print" style="margin-bottom: 5px;">
-                    <label style="font-size: 11px; cursor:pointer;"><input type="checkbox" id="iva" onchange="calcular()" style="width:auto"> + IVA</label>
+            
+            <div class="totals-container">
+                <div class="no-print" style="margin-bottom: 10px;">
+                    <label style="font-size: 11px; cursor:pointer; color:var(--neon-azul);">
+                        <input type="checkbox" id="iva-check" onchange="calcular()" style="width:auto"> CALCULAR IVA (16%)
+                    </label>
                 </div>
-                <span style="opacity: 0.6; font-size: 12px;">TOTAL:</span><br>
-                <b style="font-size: 32px; color: var(--neon-rosa); text-shadow: 0 0 10px rgba(255,0,123,0.3);">$<span id="total">0.00</span></b>
+                
+                <div class="total-row">SUBTOTAL: $<span id="subtotal">0.00</span></div>
+                <div class="total-row" id="iva-row" style="display:none;">IVA (16%): $<span id="iva-monto">0.00</span></div>
+                <div style="opacity: 0.6; font-size: 12px; margin-top:5px;">TOTAL FINAL:</div>
+                <div class="total-final">$<span id="total">0.00</span></div>
             </div>
         </div>
     </div>
@@ -197,7 +212,6 @@
 </div>
 
 <script>
-    // --- LÓGICA DE CARGA ---
     window.addEventListener('load', () => {
         setTimeout(() => {
             document.getElementById('loader').style.display = 'none';
@@ -208,16 +222,12 @@
         cargarHistorial();
     });
 
-    // --- ANIMACIÓN CADA 10 SEGUNDOS ---
     function iniciarEfectoRebote() {
         setInterval(() => {
             const title = document.getElementById('brand-title');
             title.classList.add('drop-bounce');
-            // Quitamos la clase después de que termine la animación para poder repetirla
-            setTimeout(() => {
-                title.classList.remove('drop-bounce');
-            }, 1100);
-        }, 10000); 
+            setTimeout(() => { title.classList.remove('drop-bounce'); }, 1000);
+        }, 5000); 
     }
 
     let folioNum = parseInt(localStorage.getItem("f_v5")) || 1;
@@ -236,13 +246,27 @@
     }
 
     function calcular() {
-        let t = 0;
+        let subtotal = 0;
         document.querySelectorAll("#conceptos tr").forEach(tr => {
             const inps = tr.querySelectorAll('input');
-            t += (Number(inps[1].value) * Number(inps[2].value));
+            subtotal += (Number(inps[1].value) * Number(inps[2].value));
         });
-        if(document.getElementById("iva").checked) t *= 1.16;
-        document.getElementById("total").innerText = t.toLocaleString('en-US', {minimumFractionDigits: 2});
+
+        let iva = 0;
+        let total = subtotal;
+        
+        const conIVA = document.getElementById("iva-check").checked;
+        if(conIVA) {
+            iva = subtotal * 0.16;
+            total = subtotal + iva;
+            document.getElementById("iva-row").style.display = "block";
+        } else {
+            document.getElementById("iva-row").style.display = "none";
+        }
+
+        document.getElementById("subtotal").innerText = subtotal.toLocaleString('en-US', {minimumFractionDigits: 2});
+        document.getElementById("iva-monto").innerText = iva.toLocaleString('en-US', {minimumFractionDigits: 2});
+        document.getElementById("total").innerText = total.toLocaleString('en-US', {minimumFractionDigits: 2});
     }
 
     async function generarPDFMaster() {
@@ -254,7 +278,7 @@
         for(let i = 0; i <= 100; i += 20) {
             bar.style.width = i + '%';
             document.getElementById('p-text').innerText = i + '%';
-            await new Promise(r => setTimeout(r, 80));
+            await new Promise(r => setTimeout(r, 60));
         }
 
         const pdfClone = element.cloneNode(true);

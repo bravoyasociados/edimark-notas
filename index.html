@@ -3,16 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
     <meta name="theme-color" content="#030508">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <title>EDIMARK | Pro-System</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* Tipografía Legible para datos y Orbitron para títulos */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@400;700&display=swap');
 
         :root { 
@@ -25,97 +20,55 @@
             --fuente-titulo: 'Orbitron', sans-serif;
         }
 
-        body { 
-            margin: 0; 
-            font-family: var(--fuente-lectura); 
-            background: var(--fondo); 
-            color: var(--texto); 
-            overflow-x: hidden; 
-            font-size: 15px; 
-        }
+        body { margin: 0; font-family: var(--fuente-lectura); background: var(--fondo); color: var(--texto); overflow-x: hidden; font-size: 15px; }
 
         /* --- LOADER --- */
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--fondo); z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-        }
-        .ring {
-            position: absolute; width: 80px; height: 80px;
-            border: 2px solid transparent; border-top: 2px solid var(--neon-azul);
-            border-bottom: 2px solid var(--neon-rosa); border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--fondo); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .ring { position: absolute; width: 80px; height: 80px; border: 2px solid transparent; border-top: 2px solid var(--neon-azul); border-bottom: 2px solid var(--neon-rosa); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         /* --- TÍTULO ANIMADO --- */
-        .main-title { 
-            font-family: var(--fuente-titulo);
-            color: var(--neon-azul); margin: 0; font-size: 26px; letter-spacing: 3px; 
-            text-shadow: 0 0 10px rgba(0,234,255,0.7); animation: flicker 4s linear infinite; display: inline-block;
-        }
+        .main-title { font-family: var(--fuente-titulo); color: var(--neon-azul); font-size: 26px; letter-spacing: 3px; text-shadow: 0 0 10px rgba(0,234,255,0.7); animation: flicker 4s linear infinite; display: inline-block; }
         @keyframes flicker { 0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; } 20%, 24%, 55% { opacity: 0.3; } }
-        
         .drop-bounce { animation: dropBounce 1s cubic-bezier(0.36, 0, 0.66, -0.56) forwards !important; }
-        @keyframes dropBounce {
-            0% { transform: translateY(-100px); opacity: 0; }
-            60% { transform: translateY(0); opacity: 1; }
-            75% { transform: translateY(-15px); }
-            100% { transform: translateY(0); opacity: 1; }
-        }
+        @keyframes dropBounce { 0% { transform: translateY(-100px); opacity: 0; } 60% { transform: translateY(0); opacity: 1; } 75% { transform: translateY(-15px); } 100% { transform: translateY(0); opacity: 1; } }
 
+        /* --- UI --- */
         .container { max-width: 800px; margin: auto; padding: 15px; display: none; }
-        .card { 
-            background: var(--tarjeta); border-radius: 12px; padding: 25px; 
-            border: 1px solid #1a222d; position: relative; overflow: hidden;
-        }
+        .card { background: var(--tarjeta); border-radius: 12px; padding: 30px; border: 1px solid #1a222d; position: relative; overflow: hidden; }
 
-        input { 
-            width: 100%; padding: 12px; background: #000; border: 1px solid #1f2937; 
-            color: #fff; border-radius: 6px; box-sizing: border-box; 
-            margin-bottom: 10px; font-family: var(--fuente-lectura); font-size: 14px; outline: none;
-        }
-        input:focus { border-color: var(--neon-azul); }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; position: relative; z-index: 10; }
+        input { width: 100%; padding: 12px; background: #000; border: 1px solid #1f2937; color: #fff; border-radius: 6px; box-sizing: border-box; margin-bottom: 10px; font-family: var(--fuente-lectura); font-size: 14px; outline: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; position: relative; z-index: 10; }
         th { font-family: var(--fuente-titulo); color: var(--neon-rosa); text-align: left; padding: 12px; border-bottom: 1px solid var(--neon-rosa); font-size: 12px; }
         td { padding: 10px; border-bottom: 1px solid #1f2937; }
 
-        .btn { border: none; padding: 15px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 10px; text-transform: uppercase; font-family: var(--fuente-titulo); font-size: 11px; letter-spacing: 1px; }
+        .btn { border: none; padding: 15px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 10px; text-transform: uppercase; font-family: var(--fuente-titulo); font-size: 11px; }
         .btn-save { background: var(--neon-rosa); color: white; }
         .btn-pdf { background: transparent; color: var(--neon-azul); border: 1px solid var(--neon-azul); }
 
-        /* --- CONFIGURACIÓN PDF --- */
-        .pdf-carta {
+        /* --- MARCA DE AGUA CENTRADA --- */
+        .watermark-container {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80%; opacity: 0.03; z-index: 1; pointer-events: none;
+        }
+
+        /* --- ESTILO PDF --- */
+        .pdf-export-mode {
             background-color: #030508 !important;
-            width: 215.9mm !important; /* Ancho exacto Carta */
-            height: 279.4mm !important; /* Alto exacto Carta */
-            padding: 25mm 15mm !important;
+            padding: 20mm !important;
+            border: 10px solid var(--neon-azul) !important;
+            width: 215.9mm !important;
+            height: 279.4mm !important;
             box-sizing: border-box !important;
-            border: 8px solid var(--neon-azul) !important;
-            position: relative !important;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: flex-start !important;
+            display: block !important;
         }
-
-        /* Logo centrado en el medio de la hoja */
-        .pdf-marca-agua {
-            position: absolute !important;
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) !important;
+        .pdf-export-mode .watermark-container {
+            opacity: 0.25 !important; /* 25% como pediste */
             width: 500px !important;
-            opacity: 0.20 !important;
             z-index: 0 !important;
-            pointer-events: none !important;
         }
-
-        .pdf-carta * { color: #fff !important; z-index: 10; position: relative; }
-        .pdf-carta .no-print { display: none !important; }
-
-        .watermark-ui { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; opacity: 0.03; pointer-events: none; z-index: 1; }
-        .hist-item { background: #07090d; padding: 12px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; border: 1px solid #141b24; align-items: center; font-size: 13px; }
+        .pdf-export-mode * { color: #ffffff !important; z-index: 10 !important; }
+        .no-print { display: none !important; }
     </style>
 </head>
 <body>
@@ -127,7 +80,7 @@
 
 <div class="container" id="main-content">
     <div class="card" id="area-nota">
-        <img src="logo.png" class="watermark-ui">
+        <img src="logo.png" class="watermark-container" id="main-logo">
         
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; position: relative; z-index: 10;">
             <div>
@@ -149,9 +102,9 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 60%;">DESCRIPCIÓN DEL SERVICIO</th>
-                    <th style="width: 15%; text-align: center;">CANT</th>
-                    <th style="width: 25%; text-align: right;">PRECIO</th>
+                    <th>DESCRIPCIÓN</th>
+                    <th style="text-align: center;">CANT</th>
+                    <th style="text-align: right;">PRECIO</th>
                 </tr>
             </thead>
             <tbody id="conceptos"></tbody>
@@ -160,21 +113,20 @@
         <button class="btn no-print" style="background:rgba(0,234,255,0.05); color:var(--neon-azul); border:1px dashed var(--neon-azul); margin-top: 15px;" onclick="agregarItem()">+ AGREGAR SERVICIO</button>
 
         <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 10;">
-            <div style="font-size: 10px; color: #88929b; line-height: 1.6; font-weight: 400;">
+            <div style="font-size: 10px; color: #88929b;">
                 * GARANTÍA LIMITADA: 30 DÍAS.<br>
-                * EQUIPOS MOJADOS NO TIENEN GARANTÍA.<br>
-                * COMPROBANTE DE SERVICIO DIGITAL.
+                * EQUIPOS MOJADOS NO TIENEN GARANTÍA.
             </div>
             
             <div style="text-align: right;">
                 <div class="no-print" style="margin-bottom: 10px;">
                     <label style="font-size: 11px; cursor:pointer; color:var(--neon-azul);">
-                        <input type="checkbox" id="iva-check" onchange="calcular()" style="width:auto"> Aplicar IVA (16%)
+                        <input type="checkbox" id="iva-check" onchange="calcular()" style="width:auto"> IVA (16%)
                     </label>
                 </div>
                 <div style="font-size: 13px; opacity: 0.7;">SUBTOTAL: $<span id="subtotal">0.00</span></div>
                 <div style="font-size: 13px; opacity: 0.7; display:none;" id="iva-row">IVA: $<span id="iva-monto">0.00</span></div>
-                <div style="font-family: var(--fuente-titulo); font-size: 30px; color: var(--neon-rosa); margin-top: 5px;">$<span id="total">0.00</span></div>
+                <div style="font-family: var(--fuente-titulo); font-size: 30px; color: var(--neon-rosa);">$<span id="total">0.00</span></div>
             </div>
         </div>
     </div>
@@ -184,8 +136,8 @@
         <button class="btn btn-pdf" onclick="generarPDFMaster()">📄 GENERAR PDF</button>
     </div>
 
-    <div class="card no-print" style="margin-top: 20px; border-color: #1f2937; padding: 15px;">
-        <h3 style="margin:0 0 10px 0; color:var(--neon-azul); font-size: 11px; font-family: var(--fuente-titulo);">HISTORIAL RECIENTE</h3>
+    <div class="card no-print" style="margin-top: 20px; padding: 15px;">
+        <h3 style="margin:0 0 10px 0; color:var(--neon-azul); font-size: 11px; font-family: var(--fuente-titulo);">HISTORIAL</h3>
         <div id="historial"></div>
     </div>
 </div>
@@ -209,14 +161,14 @@
         }, 5000); 
     }
 
-    let folioNum = parseInt(localStorage.getItem("f_v8")) || 1;
+    let folioNum = parseInt(localStorage.getItem("f_v9")) || 1;
     document.getElementById("folio").innerText = String(folioNum).padStart(5, '0');
     document.getElementById("fechaActual").innerText = new Date().toLocaleDateString();
 
     function agregarItem(d="", c=1, p=0) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-            <td><input value="${d}" placeholder="Ej. Cambio de Pantalla"></td>
+            <td><input value="${d}" placeholder="Servicio..."></td>
             <td><input type="number" value="${c}" oninput="calcular()" style="text-align:center"></td>
             <td><input type="number" value="${p}" oninput="calcular()" style="text-align:right"></td>
         `;
@@ -241,35 +193,40 @@
     }
 
     async function generarPDFMaster() {
-        const element = document.getElementById('area-nota');
-        const pdfClone = element.cloneNode(true);
+        const area = document.getElementById('area-nota');
+        const pdfClone = area.cloneNode(true);
         
-        // Limpieza y Estilo PDF
-        pdfClone.classList.add('pdf-carta');
+        pdfClone.classList.add('pdf-export-mode');
         
-        // Crear el logo centrado solo para el PDF
-        const logoPDF = document.createElement('img');
-        logoPDF.src = 'logo.png';
-        logoPDF.className = 'pdf-marca-agua';
-        pdfClone.appendChild(logoPDF);
-
+        // Limpiar elementos no deseados
         pdfClone.querySelectorAll('.no-print').forEach(el => el.remove());
+        
+        // Convertir inputs a texto
         pdfClone.querySelectorAll('input').forEach(inp => {
             const span = document.createElement('span');
             span.innerText = inp.value || "---";
-            span.style.borderBottom = "1px solid #333";
-            span.style.padding = "2px 5px";
+            span.style.color = "#00eaff";
             inp.replaceWith(span);
         });
 
         const opt = {
             margin: 0,
-            filename: `Ticket_EDIMARK_${folioNum}.pdf`,
+            filename: `EDIMARK_FOLIO_${folioNum}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 3, useCORS: true, backgroundColor: '#030508' },
             jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
         };
 
-        html2pdf().set(opt).from(pdfClone).save();
+        // Generar y abrir automáticamente
+        const worker = html2pdf().set(opt).from(pdfClone);
+        
+        // Esto guarda el archivo y abre la ventana de descarga del sistema
+        worker.save();
+
+        // Esto intenta abrirlo en una pestaña nueva para previsualizar/imprimir rápido
+        worker.toPdf().output('bloburl').then((url) => {
+            window.open(url, '_blank');
+        });
     }
 
     function guardarRegistro() {
@@ -284,25 +241,25 @@
             tt: document.getElementById("total").innerText, serv: items, 
             conIVA: document.getElementById("iva-check").checked
         };
-        const hist = JSON.parse(localStorage.getItem("h_v8") || "[]");
+        const hist = JSON.parse(localStorage.getItem("h_v9") || "[]");
         hist.push(data);
-        localStorage.setItem("h_v8", JSON.stringify(hist));
-        localStorage.setItem("f_v8", ++folioNum);
+        localStorage.setItem("h_v9", JSON.stringify(hist));
+        localStorage.setItem("f_v9", ++folioNum);
         location.reload();
     }
 
     function cargarHistorial() {
-        const hist = JSON.parse(localStorage.getItem("h_v8") || "[]");
+        const hist = JSON.parse(localStorage.getItem("h_v9") || "[]");
         document.getElementById("historial").innerHTML = hist.reverse().slice(0, 5).map(n => `
             <div class="hist-item">
-                <div><b>#${String(n.f).padStart(5,'0')}</b> - ${n.cl || 'Sin Nombre'}</div>
+                <div><b>#${String(n.f).padStart(5,'0')}</b> - ${n.cl || 'N/A'}</div>
                 <button onclick="restaurar(${n.f})" style="background:none; border:1px solid var(--neon-azul); color:var(--neon-azul); font-size:10px; padding:5px 10px; border-radius:4px; cursor:pointer;">ABRIR</button>
             </div>
         `).join('');
     }
 
     function restaurar(f) {
-        const hist = JSON.parse(localStorage.getItem("h_v8") || "[]");
+        const hist = JSON.parse(localStorage.getItem("h_v9") || "[]");
         const n = hist.find(x => x.f == f);
         if(!n) return;
         document.getElementById("cliente").value = n.cl;

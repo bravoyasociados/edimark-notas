@@ -3,61 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EDIMARK | Ticket System</title>
+    <title>EDIMARK | Neo-Ticket</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        :root { --azul: #00eaff; --rosa: #ff2fd0; --fondo: #0b0f1a; --card: #161b33; }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--fondo); color: white; padding: 10px; }
+        :root { 
+            --fondo: #05070a; 
+            --tarjeta: #0d1117;
+            --neon-azul: #00eaff; 
+            --neon-rosa: #ff007b; 
+            --texto: #e0e6ed;
+        }
+
+        body { 
+            margin: 0; 
+            font-family: 'Orbitron', 'Segoe UI', sans-serif; 
+            background: var(--fondo); 
+            color: var(--texto); 
+            padding: 10px;
+        }
+
         .container { max-width: 500px; margin: auto; }
-        .card { background: var(--card); border-radius: 15px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
-        
-        input { width: 100%; padding: 12px; background: #0b0f1a; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; font-size: 16px; margin-bottom: 8px; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; position: relative; z-index: 1; table-layout: fixed; }
-        th { color: var(--rosa); font-size: 11px; text-transform: uppercase; padding: 5px; border-bottom: 1px solid #333; }
-        td { padding: 5px; word-wrap: break-word; font-size: 14px; }
 
-        .btn { border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; font-size: 14px; text-transform: uppercase; }
-        .btn-save { background: #27ae60; color: white; }
-        .btn-print { background: #2980b9; color: white; }
-        .btn-pdf { background: white; color: black; border: 2px solid var(--azul); }
+        /* DISEÑO DE LA TARJETA PRINCIPAL */
+        .card { 
+            background: var(--tarjeta); 
+            border-radius: 20px; 
+            padding: 20px; 
+            border: 2px solid var(--neon-azul);
+            box-shadow: 0 0 20px rgba(0, 234, 255, 0.3);
+            position: relative; 
+            overflow: hidden;
+        }
 
-        /* --- MARCA DE AGUA VERTICAL Y CENTRADA --- */
+        /* INPUTS ESTILO FUTURISTA */
+        input { 
+            width: 100%; padding: 12px; 
+            background: rgba(0, 234, 255, 0.05); 
+            border: 1px solid #1f2937; 
+            color: var(--neon-azul); 
+            border-radius: 10px; 
+            box-sizing: border-box; 
+            font-size: 16px; margin-bottom: 10px;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--neon-rosa); box-shadow: 0 0 10px rgba(255, 0, 123, 0.4); }
+
+        /* TABLA NEÓN */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; z-index: 1; position: relative; }
+        th { color: var(--neon-rosa); font-size: 11px; text-transform: uppercase; padding: 8px; border-bottom: 2px solid var(--neon-rosa); }
+        td { padding: 10px 5px; border-bottom: 1px solid #1f2937; font-size: 14px; }
+
+        /* BOTONES */
+        .btn { 
+            border: none; padding: 15px; border-radius: 12px; 
+            font-weight: bold; cursor: pointer; width: 100%; 
+            margin-top: 10px; font-size: 14px; text-transform: uppercase;
+            transition: 0.3s;
+        }
+        .btn-save { background: var(--neon-rosa); color: white; box-shadow: 0 0 15px rgba(255, 0, 123, 0.5); }
+        .btn-pdf { background: transparent; color: var(--neon-azul); border: 2px solid var(--neon-azul); box-shadow: 0 0 10px rgba(0, 234, 255, 0.2); }
+
+        /* MARCA DE AGUA CENTRADA */
         .watermark {
-            display: none;
+            display: none; 
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 220px; opacity: 0.12; z-index: 0; pointer-events: none;
+            width: 260px; opacity: 0.15; z-index: 0; pointer-events: none;
+            filter: drop-shadow(0 0 10px var(--neon-azul));
         }
 
-        /* --- AJUSTE ESTRICTO PARA PDF Y TICKET --- */
-        #area-nota.modo-exportacion {
-            background: white !important;
-            color: black !important;
-            width: 72mm !important; /* Ligeramente menor a 80mm para evitar cortes laterales */
-            padding: 2mm !important;
-            margin: 0 auto !important;
-            display: block !important;
-            box-sizing: border-box !important;
+        /* --- ESTILOS ESPECIALES PARA EL PDF (ESTO ES LA SORPRESA) --- */
+        #area-nota.modo-pdf {
+            background: #000000 !important; /* Fondo negro total para el PDF */
+            color: #ffffff !important;
+            width: 80mm !important;
+            padding: 8mm !important;
+            border: 4px solid var(--neon-azul) !important;
         }
-        .modo-exportacion * { color: black !important; text-shadow: none !important; }
-        .modo-exportacion input { border: none !important; background: transparent !important; font-weight: bold; padding: 0; margin: 0; }
-        .modo-exportacion .watermark { display: block !important; }
-        .modo-exportacion .no-print { display: none !important; }
-        .modo-exportacion table, .modo-exportacion th, .modo-exportacion td { border: 1px solid #eee !important; }
+        .modo-pdf h2 { color: var(--neon-azul) !important; text-shadow: 0 0 10px var(--neon-azul) !important; }
+        .modo-pdf b, .modo-pdf #total { color: var(--neon-rosa) !important; text-shadow: 0 0 8px var(--neon-rosa) !important; }
+        .modo-pdf .watermark { display: block !important; }
+        .modo-pdf .no-print { display: none !important; }
+        .modo-pdf input { color: white !important; background: transparent !important; border: none !important; }
 
-        .historial-item { background: #1c223d; padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--azul); }
+        /* HISTORIAL */
+        .historial-item { 
+            background: #0d1117; padding: 15px; border-radius: 12px; 
+            margin-top: 10px; display: flex; justify-content: space-between; 
+            border: 1px solid #1f2937;
+        }
 
-        /* CONFIGURACIÓN DE IMPRESIÓN FÍSICA */
         @media print {
-            @page { size: 80mm auto; margin: 0; }
+            .no-print { display: none !important; }
             body { background: white; }
-            .no-print, .btn { display: none !important; }
-            .container { width: 100%; padding: 0; margin: 0; }
-            .card { width: 80mm; padding: 4mm; box-shadow: none; background: white !important; color: black !important; }
-            .watermark { display: block !important; }
-            * { -webkit-print-color-adjust: exact; }
+            .card { width: 80mm; background: white !important; color: black !important; border: 1px solid black; box-shadow: none; }
         }
     </style>
 </head>
@@ -65,80 +106,75 @@
 
 <div class="container">
     <div class="card" id="area-nota">
-        <img src="logo.png" class="watermark">
+        <img src="logo.png" class="watermark" id="watermark">
 
-        <div style="text-align: center; margin-bottom: 10px; position: relative; z-index: 1;">
-            <h2 style="margin:0; color:var(--azul); font-size: 24px;">EDIMARK</h2>
-            <div style="font-size: 10px; letter-spacing: 2px;">SOLUCIONES TECNOLÓGICAS</div>
-            <div style="margin-top:8px; border-top: 1px dashed #555; padding-top: 8px;">
-                <b>FOLIO: <span id="folio" style="color:var(--rosa)"></span></b> | 
-                <span id="fechaActual"></span>
+        <div style="text-align: center; margin-bottom: 20px; position: relative; z-index: 1;">
+            <h2 style="margin:0; color:var(--neon-azul); letter-spacing: 3px; font-size: 28px;">EDIMARK</h2>
+            <div style="font-size: 9px; color: var(--neon-rosa); letter-spacing: 4px; font-weight: bold;">SYSTEM PROTOCOL v2.0</div>
+            <div style="margin-top:15px; border-top: 1px double var(--neon-azul); padding-top: 10px; font-size: 12px;">
+                ID: <span id="folio" style="color:var(--neon-azul)"></span> | <span id="fechaActual"></span>
             </div>
         </div>
 
         <div style="position: relative; z-index: 1;">
-            <input id="cliente" placeholder="Cliente">
-            <div style="display:flex; gap:5px">
-                <input id="modelo" placeholder="Modelo">
-                <input id="imei" placeholder="IMEI">
+            <input id="cliente" placeholder="USUARIO / CLIENTE">
+            <div style="display:flex; gap:8px">
+                <input id="modelo" placeholder="HARDWARE ID">
+                <input id="imei" placeholder="SERIAL / IMEI">
             </div>
 
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 50%; text-align: left;">Servicio</th>
-                        <th style="width: 15%;">Cant</th>
-                        <th style="width: 35%;">$ Total</th>
-                        <th class="no-print" style="width: 10%;"></th>
+                        <th style="text-align: left;">MÓDULO</th>
+                        <th style="width: 40px;">QTY</th>
+                        <th style="width: 80px;">CRÉDITOS</th>
+                        <th class="no-print" style="width: 30px;"></th>
                     </tr>
                 </thead>
                 <tbody id="conceptos"></tbody>
             </table>
 
-            <button class="btn no-print" style="background:#333; color:white; padding:8px" onclick="agregarItem()">+ AGREGAR SERVICIO</button>
+            <button class="btn no-print" style="background:rgba(0, 234, 255, 0.1); color:var(--neon-azul); border: 1px solid var(--neon-azul);" onclick="agregarItem()">+ AÑADIR REGISTRO</button>
 
-            <div style="text-align: right; margin-top: 12px; border-top: 2px solid #333; padding-top: 8px;">
-                <div class="no-print" style="font-size:11px;">
-                    <label><input type="checkbox" id="iva" onchange="calcular()" style="width:auto"> IVA (16%)</label>
+            <div style="text-align: right; margin-top: 20px; border-top: 2px solid var(--neon-azul); padding-top: 15px;">
+                <div class="no-print" style="font-size:11px; margin-bottom: 10px;">
+                    <label><input type="checkbox" id="iva" onchange="calcular()" style="width:auto"> ACTIVAR IVA 16%</label>
                 </div>
-                <b style="font-size: 22px;">TOTAL: $<span id="total">0.00</span></b>
+                <div style="font-size: 14px; opacity: 0.7;">TOTAL NETO:</div>
+                <b style="font-size: 32px; color: var(--neon-rosa);">$<span id="total">0.00</span></b>
             </div>
 
-            <div style="margin-top: 20px; font-size: 9px; text-align: center; opacity: 0.8; line-height: 1.2;">
-                * EQUIPOS MOJADOS NO TIENEN GARANTÍA *<br>
-                * DESPUÉS DE 30 DÍAS NO HAY RESPONSABILIDAD *<br>
-                <b>¡GRACIAS POR SU PREFERENCIA!</b>
+            <div style="margin-top: 30px; font-size: 9px; text-align: center; color: var(--neon-azul); text-transform: uppercase;">
+                * ADVERTENCIA: EQUIPOS MOJADOS SIN GARANTÍA *<br>
+                * PROTOCOLO DE SALIDA COMPLETADO *
             </div>
         </div>
 
-        <div class="no-print" style="margin-top: 15px;">
-            <button class="btn btn-save" onclick="guardarCompleto()">💾 GUARDAR</button>
-            <button class="btn btn-print" onclick="imprimirFisico()">🎫 IMPRIMIR TICKET</button>
-            <button class="btn btn-pdf" onclick="generarTicketPDF()">📄 DESCARGAR PDF</button>
+        <div class="no-print" style="margin-top: 20px;">
+            <button class="btn btn-save" onclick="guardarTodo()">💾 REGISTRAR EN MEMORIA</button>
+            <button class="btn btn-pdf" onclick="descargarNeoPDF()">📄 GENERAR NEO-TICKET (PDF)</button>
         </div>
     </div>
 
-    <div class="card no-print" style="margin-top: 20px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h4 style="margin:0; color:var(--azul)">HISTORIAL</h4>
-            <button onclick="borrarHistorial()" style="background:none; border:none; color:var(--rosa); font-size:10px; cursor:pointer;">BORRAR TODO</button>
-        </div>
+    <div class="card no-print" style="margin-top: 20px; border-color: #333;">
+        <h4 style="margin:0; color:var(--neon-rosa)">LOG DE MEMORIA</h4>
         <div id="historial"></div>
     </div>
 </div>
 
 <script>
-    let folioActual = parseInt(localStorage.getItem("folio_edimark_final")) || 1;
-    document.getElementById("folio").innerText = String(folioActual).padStart(4, '0');
+    let folioActual = parseInt(localStorage.getItem("folio_neo")) || 1;
+    document.getElementById("folio").innerText = String(folioActual).padStart(5, '0');
     document.getElementById("fechaActual").innerText = new Date().toLocaleDateString();
 
     function agregarItem(d="", c=1, p=0) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-            <td><input value="${d}" placeholder="Servicio"></td>
+            <td><input value="${d}" placeholder="..."></td>
             <td><input type="number" value="${c}" oninput="calcular()" style="text-align:center"></td>
             <td><input type="number" value="${p}" oninput="calcular()" style="text-align:center"></td>
-            <td class="no-print"><button onclick="this.closest('tr').remove();calcular()" style="color:red; background:none; border:none; font-size:20px;">×</button></td>
+            <td class="no-print"><button onclick="this.closest('tr').remove();calcular()" style="color:var(--neon-rosa); background:none; border:none; font-size:20px; cursor:pointer;">×</button></td>
         `;
         document.getElementById("conceptos").appendChild(tr);
         calcular();
@@ -154,105 +190,79 @@
         document.getElementById("total").innerText = t.toFixed(2);
     }
 
-    function imprimirFisico() {
-        window.print();
-    }
-
-    function generarTicketPDF() {
+    function descargarNeoPDF() {
         const element = document.getElementById("area-nota");
-        const cliente = document.getElementById("cliente").value || "Cliente";
+        const cliente = document.getElementById("cliente").value || "UNNAMED";
         
-        element.classList.add("modo-exportacion");
-        
-        // Calculamos altura dinámica real
-        const altoEnMm = (element.scrollHeight * 0.2645) + 10;
+        element.classList.add("modo-pdf");
+        const altoEnMm = (element.scrollHeight * 0.2645) + 20;
 
         const opt = {
             margin: 0,
-            filename: `Ticket_${folioActual}_${cliente}.pdf`,
+            filename: `NEO_TICKET_${folioActual}.pdf`,
             image: { type: 'jpeg', quality: 1 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true,
-                width: 302 // Forzado a 80mm en resolución de pantalla
-            },
+            html2canvas: { scale: 3, useCORS: true, backgroundColor: '#000000' },
             jsPDF: { unit: 'mm', format: [80, altoEnMm], orientation: 'portrait' }
         };
 
         html2pdf().set(opt).from(element).save().then(() => {
-            element.classList.remove("modo-exportacion");
+            element.classList.remove("modo-pdf");
         });
     }
 
-    function guardarCompleto() {
+    function guardarTodo() {
         const items = [];
         document.querySelectorAll("#conceptos tr").forEach(tr => {
             const inputs = tr.querySelectorAll('input');
-            items.push({ desc: inputs[0].value, cant: inputs[1].value, prec: inputs[2].value });
+            items.push({ d: inputs[0].value, c: inputs[1].value, p: inputs[2].value });
         });
 
         const nota = {
-            folio: folioActual,
-            cliente: document.getElementById("cliente").value,
-            modelo: document.getElementById("modelo").value,
-            imei: document.getElementById("imei").value,
-            total: document.getElementById("total").innerText,
+            f: folioActual,
+            cl: document.getElementById("cliente").value,
+            mod: document.getElementById("modelo").value,
+            im: document.getElementById("imei").value,
+            tt: document.getElementById("total").innerText,
             fecha: new Date().toLocaleString(),
-            servicios: items
+            serv: items
         };
 
-        const historial = JSON.parse(localStorage.getItem("historial_edimark") || "[]");
-        historial.push(nota);
-        localStorage.setItem("historial_edimark", JSON.stringify(historial));
-        localStorage.setItem("folio_edimark_final", ++folioActual);
+        const hist = JSON.parse(localStorage.getItem("historial_neo") || "[]");
+        hist.push(nota);
+        localStorage.setItem("historial_neo", JSON.stringify(hist));
+        localStorage.setItem("folio_neo", ++folioActual);
         
-        alert("¡Ticket guardado!");
+        alert("DATOS ENCRIPTADOS Y GUARDADOS");
         location.reload();
     }
 
     function cargarHistorial() {
-        const historial = JSON.parse(localStorage.getItem("historial_edimark") || "[]");
+        const hist = JSON.parse(localStorage.getItem("historial_neo") || "[]");
         const container = document.getElementById("historial");
-        if (historial.length === 0) {
-            container.innerHTML = "<small style='opacity:0.5'>Vacio</small>";
-            return;
-        }
-        container.innerHTML = historial.reverse().slice(0, 10).map(n => `
+        container.innerHTML = hist.reverse().slice(0, 5).map(n => `
             <div class="historial-item">
-                <div style="font-size:11px"><b>#${String(n.folio).padStart(4,'0')}</b><br>${n.cliente}</div>
+                <div style="font-size:11px"><b style="color:var(--neon-azul)">#${n.f}</b><br>${n.cl}</div>
                 <div style="text-align:right">
-                    <b style="color:var(--azul)">$${n.total}</b><br>
-                    <button onclick="recargarTicket(${n.folio})" style="font-size:9px; background:#333; color:white; border:1px solid #555; padding:2px 5px; border-radius:4px;">VER</button>
+                    <b style="color:var(--neon-rosa)">$${n.tt}</b><br>
+                    <button onclick="recuperar(${n.f})" style="font-size:9px; background:none; border:1px solid var(--neon-azul); color:var(--neon-azul); padding:2px 5px; border-radius:4px; margin-top:5px;">RESTAURAR</button>
                 </div>
             </div>
         `).join('');
     }
 
-    function recargarTicket(f) {
-        const historial = JSON.parse(localStorage.getItem("historial_edimark") || "[]");
-        const n = historial.find(x => x.folio == f);
-        if(!n) return;
-        document.getElementById("cliente").value = n.cliente;
-        document.getElementById("modelo").value = n.modelo;
-        document.getElementById("imei").value = n.imei;
-        document.getElementById("folio").innerText = String(n.folio).padStart(4, '0');
+    function recuperar(f) {
+        const hist = JSON.parse(localStorage.getItem("historial_neo") || "[]");
+        const n = hist.find(x => x.f == f);
+        document.getElementById("cliente").value = n.cl;
+        document.getElementById("modelo").value = n.mod;
+        document.getElementById("imei").value = n.im;
+        document.getElementById("folio").innerText = String(n.f).padStart(5, '0');
         const tbody = document.getElementById("conceptos");
         tbody.innerHTML = "";
-        n.servicios.forEach(s => agregarItem(s.desc, s.cant, s.prec));
-        window.scrollTo(0,0);
+        n.serv.forEach(s => agregarItem(s.d, s.c, s.p));
     }
 
-    function borrarHistorial() {
-        if(confirm("¿Borrar todo el historial?")) {
-            localStorage.clear();
-            location.reload();
-        }
-    }
-
-    window.onload = () => {
-        agregarItem();
-        cargarHistorial();
-    };
+    window.onload = () => { agregarItem(); cargarHistorial(); };
 </script>
 </body>
 </html>

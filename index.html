@@ -10,7 +10,8 @@
 
     <meta property="og:title" content="EDIMARK | Neo-System Pro">
     <meta property="og:description" content="Protocolo Digital de Servicio Técnico Especializado.">
-    <meta property="og:image" content="logo.png"> <meta property="og:type" content="website">
+    <meta property="og:image" content="logo.png">
+    <meta property="og:type" content="website">
 
     <title>EDIMARK | Pro-System</title>
     
@@ -26,9 +27,9 @@
             --texto: #d1d9e0;
         }
 
-        /* --- ESTILOS GENERALES (Mantenidos y optimizados) --- */
         body { margin: 0; font-family: 'Orbitron', sans-serif; background: var(--fondo); color: var(--texto); overflow-x: hidden; font-size: 14px; }
 
+        /* --- LOADER --- */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--fondo); z-index: 9999;
@@ -45,6 +46,37 @@
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes flip { 0%, 100% { transform: rotateY(0deg); } 50% { transform: rotateY(360deg); } }
 
+        /* --- TÍTULO DINÁMICO --- */
+        .main-title { 
+            color: var(--neon-azul); 
+            margin: 0; 
+            font-size: 28px; 
+            letter-spacing: 3px; 
+            text-shadow: 0 0 10px rgba(0,234,255,0.7);
+            animation: flicker 4s linear infinite;
+            display: inline-block;
+        }
+
+        /* Parpadeo de neón */
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
+            20%, 24%, 55% { opacity: 0.3; }
+        }
+
+        /* Efecto de Caída y Rebote */
+        .drop-bounce {
+            animation: dropBounce 1s cubic-bezier(0.36, 0, 0.66, -0.56) forwards !important;
+        }
+
+        @keyframes dropBounce {
+            0% { transform: translateY(-200px); opacity: 0; }
+            60% { transform: translateY(0); opacity: 1; }
+            75% { transform: translateY(-20px); }
+            90% { transform: translateY(0); }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        /* --- UI ELEMENTS --- */
         #download-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); z-index: 8000;
@@ -58,7 +90,6 @@
             background: var(--tarjeta); border-radius: 12px; padding: 25px; 
             border: 1px solid #1a222d; position: relative; overflow: hidden;
         }
-        .main-title { color: var(--neon-azul); margin: 0; font-size: 28px; letter-spacing: 3px; text-shadow: 0 0 10px rgba(0,234,255,0.5); }
 
         input { 
             width: 100%; padding: 10px; background: #000; border: 1px solid #1f2937; 
@@ -74,7 +105,7 @@
         .btn-save { background: var(--neon-rosa); color: white; }
         .btn-pdf { background: transparent; color: var(--neon-azul); border: 1px solid var(--neon-azul); }
 
-        /* --- ESTILOS PDF --- */
+        /* PDF CARTA ESTILO */
         .pdf-carta {
             background-color: #030508 !important;
             width: 215.9mm !important;
@@ -83,9 +114,7 @@
             box-sizing: border-box !important;
             border: 4px solid var(--neon-azul) !important;
         }
-        .pdf-carta .watermark-pdf { opacity: 0.12 !important; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); width: 450px; pointer-events: none; }
         .pdf-carta * { color: #fff !important; }
-
         .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 350px; opacity: 0.03; pointer-events: none; }
         .hist-item { background: #07090d; padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; border: 1px solid #141b24; align-items: center; font-size: 11px; }
     </style>
@@ -112,7 +141,7 @@
         
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; position: relative; z-index: 2;">
             <div>
-                <h1 class="main-title">EDIMARK</h1>
+                <h1 id="brand-title" class="main-title">EDIMARK</h1>
                 <p style="color:var(--neon-rosa); font-size: 9px; letter-spacing: 2px;">NEO-TECHNOLOGY REPAIR</p>
             </div>
             <div style="text-align: right;">
@@ -173,10 +202,23 @@
         setTimeout(() => {
             document.getElementById('loader').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
+            iniciarEfectoRebote();
         }, 2000);
         agregarItem();
         cargarHistorial();
     });
+
+    // --- ANIMACIÓN CADA 10 SEGUNDOS ---
+    function iniciarEfectoRebote() {
+        setInterval(() => {
+            const title = document.getElementById('brand-title');
+            title.classList.add('drop-bounce');
+            // Quitamos la clase después de que termine la animación para poder repetirla
+            setTimeout(() => {
+                title.classList.remove('drop-bounce');
+            }, 1100);
+        }, 10000); 
+    }
 
     let folioNum = parseInt(localStorage.getItem("f_v5")) || 1;
     document.getElementById("folio").innerText = String(folioNum).padStart(5, '0');
@@ -218,9 +260,6 @@
         const pdfClone = element.cloneNode(true);
         pdfClone.classList.add('pdf-carta');
         
-        const wm = pdfClone.querySelector('.watermark');
-        wm.className = 'watermark-pdf';
-
         pdfClone.querySelectorAll('input').forEach(inp => {
             const span = document.createElement('span');
             span.innerText = inp.value || "---";

@@ -3,102 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EDIMARK | Neo-Carta V3</title>
+    <title>EDIMARK | Neo-Protocol V4</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap');
 
         :root { 
-            --fondo: #05070a; 
-            --tarjeta: #0d1117;
+            --fondo: #030508; 
+            --tarjeta: #0a0d12;
             --neon-azul: #00eaff; 
             --neon-rosa: #ff007b; 
-            --texto: #e0e6ed;
+            --texto: #f0f4f8;
         }
 
         body { margin: 0; font-family: 'Orbitron', sans-serif; background: var(--fondo); color: var(--texto); overflow-x: hidden; }
 
-        /* --- LOADER CON LOGO GIRANDO --- */
+        /* --- INTRO ANIMADA --- */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--fondo); z-index: 9999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
-        .logo-box {
-            position: relative; width: 150px; height: 150px;
-            display: flex; justify-content: center; align-items: center;
-            perspective: 1000px;
-        }
+        .logo-box { position: relative; width: 160px; height: 160px; display: flex; justify-content: center; align-items: center; perspective: 1000px; }
         .ring {
-            position: absolute; width: 120px; height: 120px;
-            border: 2px solid transparent; border-top: 2px solid var(--neon-azul);
-            border-bottom: 2px solid var(--neon-rosa); border-radius: 50%;
-            animation: spin-ring 1.5s linear infinite;
+            position: absolute; width: 140px; height: 140px;
+            border: 3px solid transparent; border-top: 3px solid var(--neon-azul);
+            border-bottom: 3px solid var(--neon-rosa); border-radius: 50%;
+            animation: spin-ring 1s linear infinite; box-shadow: 0 0 20px var(--neon-azul);
         }
-        .logo-img { 
-            width: 80px; height: 80px; object-fit: contain; 
-            animation: flip-logo 3s ease-in-out infinite; 
-        }
-
+        .logo-img { width: 90px; height: 90px; object-fit: contain; animation: flip-logo 2.5s ease-in-out infinite; }
         @keyframes spin-ring { 100% { transform: rotate(360deg); } }
-        @keyframes flip-logo { 
-            0%, 100% { transform: rotateY(0deg); } 
-            50% { transform: rotateY(360deg); } 
-        }
+        @keyframes flip-logo { 0%, 100% { transform: rotateY(0deg) scale(1); } 50% { transform: rotateY(360deg) scale(1.1); } }
 
-        /* --- BARRA DE PROGRESO --- */
+        /* --- BARRA DE PROCESO --- */
         #download-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 7, 10, 0.98); z-index: 8000;
+            background: rgba(0,0,0,0.98); z-index: 8000;
             flex-direction: column; justify-content: center; align-items: center;
         }
-        .p-bar-bg { width: 250px; height: 4px; background: #111; border-radius: 10px; margin-top: 20px; overflow: hidden; border: 1px solid #333; }
-        .p-bar-fill { width: 0%; height: 100%; background: var(--neon-azul); box-shadow: 0 0 15px var(--neon-azul); }
+        .p-bar-bg { width: 280px; height: 6px; background: #111; border-radius: 10px; margin-top: 20px; border: 1px solid var(--neon-azul); overflow: hidden; }
+        .p-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--neon-azul), var(--neon-rosa)); box-shadow: 0 0 15px var(--neon-azul); }
 
-        /* --- UI --- */
+        /* --- DISEÑO PRINCIPAL --- */
         .container { max-width: 850px; margin: auto; padding: 20px; display: none; }
         .card { 
             background: var(--tarjeta); border-radius: 20px; padding: 40px; 
-            border: 1px solid var(--neon-azul); box-shadow: 0 0 30px rgba(0, 234, 255, 0.1);
+            border: 2px solid var(--neon-azul); box-shadow: inset 0 0 20px rgba(0, 234, 255, 0.2), 0 0 40px rgba(0, 234, 255, 0.1);
             position: relative; overflow: hidden;
         }
-        .flicker { animation: flicker 4s linear infinite; }
-        @keyframes flicker { 0%, 18%, 20%, 50%, 52%, 100% { opacity: 1; text-shadow: 0 0 10px var(--neon-azul); } 19%, 51% { opacity: 0.5; text-shadow: none; } }
+
+        .flicker { 
+            font-weight: 900; 
+            animation: flicker 2s linear infinite; 
+            background: linear-gradient(to bottom, #fff, var(--neon-azul));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        @keyframes flicker { 0%, 18%, 20%, 50%, 52%, 100% { opacity: 1; filter: drop-shadow(0 0 10px var(--neon-azul)); } 19%, 51% { opacity: 0.4; filter: none; } }
 
         input { 
-            width: 100%; padding: 14px; background: rgba(0,0,0,0.5); border: 1px solid #1f2937; 
-            color: var(--neon-azul); border-radius: 8px; box-sizing: border-box; 
+            width: 100%; padding: 15px; background: rgba(0,0,0,0.7); border: 1px solid #2a3544; 
+            color: var(--neon-azul); border-radius: 10px; box-sizing: border-box; 
             margin-bottom: 15px; font-family: 'Orbitron', sans-serif; outline: none; transition: 0.3s;
         }
-        input:focus { border-color: var(--neon-azul); box-shadow: 0 0 10px rgba(0,234,255,0.2); }
+        input:focus { border-color: var(--neon-rosa); box-shadow: 0 0 15px rgba(255,0,123,0.3); }
 
         table { width: 100%; border-collapse: collapse; margin-top: 25px; }
-        th { color: var(--neon-rosa); text-align: left; padding: 12px; border-bottom: 2px solid var(--neon-rosa); font-size: 13px; }
-        td { padding: 12px; border-bottom: 1px solid #1f2937; }
+        th { color: var(--neon-rosa); text-align: left; padding: 15px; border-bottom: 2px solid var(--neon-rosa); font-size: 14px; text-transform: uppercase; }
+        td { padding: 15px; border-bottom: 1px solid #1f2937; }
 
-        .btn { border: none; padding: 18px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; text-transform: uppercase; font-family: 'Orbitron', sans-serif; transition: 0.3s; }
-        .btn-save { background: var(--neon-rosa); color: white; }
-        .btn-pdf { background: transparent; color: var(--neon-azul); border: 2px solid var(--neon-azul); }
-        .btn:active { transform: scale(0.98); }
+        .btn { border: none; padding: 20px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; text-transform: uppercase; font-family: 'Orbitron', sans-serif; transition: 0.3s; letter-spacing: 2px; }
+        .btn-save { background: var(--neon-rosa); color: white; box-shadow: 0 0 20px rgba(255,0,123,0.4); }
+        .btn-pdf { background: transparent; color: var(--neon-azul); border: 2px solid var(--neon-azul); box-shadow: 0 0 10px rgba(0,234,255,0.2); }
 
-        /* --- ESTILO ESPECIAL PDF (CLONE) --- */
+        /* --- ESTILO PDF CARTA PREMIUM --- */
         .pdf-carta {
-            background-color: #05070a !important;
-            color: #e0e6ed !important;
+            background-color: #030508 !important;
             width: 215.9mm !important;
             height: 279.4mm !important;
-            padding: 20mm !important;
+            padding: 15mm !important;
             box-sizing: border-box !important;
-            display: flex !important;
-            flex-direction: column !important;
+            border: 5px solid var(--neon-azul) !important; /* Reflejo en el borde */
+            box-shadow: inset 0 0 100px rgba(0, 234, 255, 0.15) !important;
         }
-        .pdf-carta * { color: #e0e6ed !important; border-color: #1f2937 !important; }
-        .pdf-carta h1, .pdf-carta #folio-pdf { color: #00eaff !important; }
-        .pdf-carta th, .pdf-carta #total-pdf { color: #ff007b !important; }
-        .pdf-carta .watermark-pdf { opacity: 0.05 !important; position: absolute; top: 30%; left: 15%; width: 500px; }
+        .pdf-carta .watermark-pdf { 
+            opacity: 0.15 !important; /* Marca de agua más visible */
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); 
+            width: 500px; pointer-events: none; filter: brightness(1.5);
+        }
+        .pdf-carta * { color: #f0f4f8 !important; border-color: #2a3544 !important; }
+        .pdf-carta #total-pdf { color: #ff007b !important; text-shadow: 0 0 10px #ff007b !important; }
 
-        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; opacity: 0.03; pointer-events: none; }
-        .hist-item { background: #0d1117; padding: 15px; border-radius: 10px; margin-top: 10px; display: flex; justify-content: space-between; border: 1px solid #1f2937; align-items: center; }
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); width: 450px; opacity: 0.05; pointer-events: none; }
+        .hist-item { background: #0a0d12; padding: 15px; border-radius: 12px; margin-top: 10px; display: flex; justify-content: space-between; border: 1px solid #1f2937; align-items: center; }
     </style>
 </head>
 <body>
@@ -108,14 +105,12 @@
         <div class="ring"></div>
         <img src="logo.png" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2991/2991148.png'">
     </div>
-    <p style="margin-top:30px; color:var(--neon-azul); letter-spacing:10px; font-size: 11px; font-weight: bold;">ACCEDIENDO AL SISTEMA</p>
+    <p style="margin-top:40px; color:var(--neon-azul); letter-spacing:12px; font-size: 11px; text-shadow: 0 0 10px var(--neon-azul);">EDIMARK CORE INITIALIZING</p>
 </div>
 
 <div id="download-overlay">
-    <div class="logo-box" style="transform: scale(0.6);">
-        <div class="ring" style="animation-duration: 0.5s;"></div>
-    </div>
-    <h3 style="color:var(--neon-azul); letter-spacing: 5px; margin-top: 0;">PROCESANDO NEO-PDF</h3>
+    <div class="logo-box" style="transform: scale(0.5);"><div class="ring"></div></div>
+    <h2 style="color:var(--neon-azul); letter-spacing: 5px;">SYNCHRONIZING PDF</h2>
     <div class="p-bar-bg"><div class="p-bar-fill" id="p-bar"></div></div>
     <p id="p-text" style="color:var(--neon-rosa); margin-top:10px; font-size: 12px;">0%</p>
 </div>
@@ -124,65 +119,64 @@
     <div class="card" id="area-nota">
         <img src="logo.png" class="watermark">
         
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 50px; position: relative; z-index: 2;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px; position: relative; z-index: 2;">
             <div>
-                <h1 class="flicker" style="margin:0; font-size: 40px; letter-spacing: 4px; color: var(--neon-azul);">EDIMARK</h1>
-                <p style="color:var(--neon-rosa); font-size: 10px; letter-spacing: 3px;">SOLUCIONES TECNOLÓGICAS DE VANGUARDIA</p>
+                <h1 class="flicker" style="margin:0; font-size: 45px; letter-spacing: 5px;">EDIMARK</h1>
+                <p style="color:var(--neon-rosa); font-size: 11px; font-weight: bold; letter-spacing: 4px;">SYSTEM REPAIR LOG V4.0</p>
             </div>
-            <div style="text-align: right; border-left: 1px solid var(--neon-azul); padding-left: 20px;">
-                <p style="margin:0; font-size: 14px;">FOLIO: <span id="folio" style="color:var(--neon-azul); font-weight: bold;"></span></p>
-                <p style="margin:0; font-size: 12px; opacity: 0.7;" id="fechaActual"></p>
+            <div style="text-align: right; background: rgba(0, 234, 255, 0.05); padding: 15px; border-radius: 10px; border-right: 4px solid var(--neon-azul);">
+                <p style="margin:0; font-size: 14px; color: var(--neon-azul);">ID: <span id="folio"></span></p>
+                <p style="margin:5px 0 0 0; font-size: 10px; opacity: 0.8;" id="fechaActual"></p>
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; position: relative; z-index: 2;">
-            <input id="cliente" placeholder="> NOMBRE DEL CLIENTE">
-            <input id="modelo" placeholder="> EQUIPO / MODELO">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 2;">
+            <input id="cliente" placeholder="> IDENTIFICAR CLIENTE">
+            <input id="modelo" placeholder="> HARDWARE / MODELO">
         </div>
-        <input id="imei" placeholder="> IMEI / SERIAL NUMBER" style="position: relative; z-index: 2;">
+        <input id="imei" placeholder="> IMEI / UNIQUE ID NUMBER" style="position: relative; z-index: 2;">
 
         <table style="position: relative; z-index: 2;">
             <thead>
                 <tr>
-                    <th style="width: 65%;">DESCRIPCIÓN DEL PROTOCOLO</th>
-                    <th style="width: 10%; text-align: center;">CANT</th>
-                    <th style="width: 25%; text-align: right;">VALOR</th>
+                    <th style="width: 60%;">PROTOCOLO DE SERVICIO</th>
+                    <th style="width: 15%; text-align: center;">CANT</th>
+                    <th style="width: 25%; text-align: right;">CRÉDITOS</th>
                 </tr>
             </thead>
             <tbody id="conceptos"></tbody>
         </table>
 
-        <button class="btn no-print" style="background:rgba(0,234,255,0.05); color:var(--neon-azul); border:1px dashed var(--neon-azul); font-size: 12px;" onclick="agregarItem()">+ AÑADIR SERVICIO</button>
+        <button class="btn no-print" style="background:rgba(0,234,255,0.1); color:var(--neon-azul); border:1px dashed var(--neon-azul); margin-bottom: 20px;" onclick="agregarItem()">+ INTEGRAR NUEVO MÓDULO</button>
 
-        <div style="margin-top: 80px; display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 2;">
-            <div style="font-size: 10px; color: #556; line-height: 1.6;">
-                * GARANTÍA DE 30 DÍAS SOBRE REPARACIÓN.<br>
-                * EQUIPOS MOJADOS O GOLPEADOS NO TIENEN GARANTÍA.<br>
-                * REVISIÓN TÉCNICA ESPECIALIZADA.
+        <div style="margin-top: 60px; display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 2;">
+            <div style="font-size: 10px; color: #6a7a8a; line-height: 1.8; border-left: 2px solid var(--neon-rosa); padding-left: 15px;">
+                * GARANTÍA DE SISTEMA: 30 DÍAS TERRESTRES.<br>
+                * NO APLICA POR DAÑO FÍSICO O CORROSIÓN.<br>
+                * ESTE DOCUMENTO ES UN COMPROBANTE DIGITAL.
             </div>
             <div style="text-align: right;">
-                <div class="no-print" style="margin-bottom: 10px;">
-                    <label style="font-size: 12px; cursor:pointer;"><input type="checkbox" id="iva" onchange="calcular()" style="width:auto"> APLICAR IVA</label>
+                <div class="no-print" style="margin-bottom: 15px;">
+                    <label style="font-size: 12px; color:var(--neon-azul); cursor:pointer;"><input type="checkbox" id="iva" onchange="calcular()" style="width:auto"> ACTIVAR TAX (16%)</label>
                 </div>
-                <span style="opacity: 0.6; font-size: 14px;">TOTAL NETO:</span><br>
-                <b style="font-size: 45px; color: var(--neon-rosa);">$<span id="total">0.00</span></b>
+                <span style="opacity: 0.6; font-size: 16px; letter-spacing: 2px;">TOTAL FINAL:</span><br>
+                <b style="font-size: 50px; color: var(--neon-rosa); text-shadow: 0 0 20px rgba(255,0,123,0.5);">$<span id="total">0.00</span></b>
             </div>
         </div>
     </div>
 
     <div class="no-print" style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-        <button class="btn btn-save" onclick="guardarRegistro()">💾 GUARDAR REGISTRO</button>
-        <button class="btn btn-pdf" onclick="descargarPDFCartaVertical()">📄 GENERAR PDF CARTA</button>
+        <button class="btn btn-save" onclick="guardarRegistro()">💾 ALMACENAR EN NÚCLEO</button>
+        <button class="btn btn-pdf" onclick="descargarPDFPremium()">📄 DESCARGAR NEO-PDF</button>
     </div>
 
-    <div class="card no-print" style="margin-top: 30px; border-color: #1f2937;">
-        <h3 style="margin:0 0 15px 0; color:var(--neon-azul); font-size: 14px; text-transform: uppercase;">Historial del Sistema</h3>
+    <div class="card no-print" style="margin-top: 30px; border-color: #2a3544;">
+        <h3 style="margin:0 0 20px 0; color:var(--neon-azul); font-size: 14px; letter-spacing: 3px;">REGISTROS RECIENTES</h3>
         <div id="historial"></div>
     </div>
 </div>
 
 <script>
-    // --- LÓGICA DE CARGA ---
     window.addEventListener('load', () => {
         setTimeout(() => {
             document.getElementById('loader').style.display = 'none';
@@ -192,14 +186,14 @@
         cargarHistorial();
     });
 
-    let folioID = parseInt(localStorage.getItem("folio_v3_carta")) || 1;
-    document.getElementById("folio").innerText = String(folioID).padStart(5, '0');
-    document.getElementById("fechaActual").innerText = new Date().toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    let folioID = parseInt(localStorage.getItem("folio_v4")) || 1;
+    document.getElementById("folio").innerText = String(folioID).padStart(6, '0');
+    document.getElementById("fechaActual").innerText = new Date().toLocaleString('es-MX', { dateStyle: 'full' }).toUpperCase();
 
     function agregarItem(d="", c=1, p=0) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-            <td><input value="${d}" placeholder="Describa el trabajo..."></td>
+            <td><input value="${d}" placeholder="Inyectar descripción..."></td>
             <td><input type="number" value="${c}" oninput="calcular()" style="text-align:center"></td>
             <td><input type="number" value="${p}" oninput="calcular()" style="text-align:right"></td>
         `;
@@ -214,44 +208,45 @@
             total += (Number(inps[1].value) * Number(inps[2].value));
         });
         if(document.getElementById("iva").checked) total *= 1.16;
-        document.getElementById("total").innerText = total.toLocaleString('es-MX', {minimumFractionDigits: 2});
+        document.getElementById("total").innerText = total.toLocaleString('en-US', {minimumFractionDigits: 2});
     }
 
-    // --- PDF CARTA VERTICAL REPLICANDO DISEÑO ---
-    async function descargarPDFCartaVertical() {
+    async function descargarPDFPremium() {
         const overlay = document.getElementById('download-overlay');
         const bar = document.getElementById('p-bar');
         const element = document.getElementById('area-nota');
         
         overlay.style.display = 'flex';
-        for(let i = 0; i <= 100; i += 5) {
+        for(let i = 0; i <= 100; i += 10) {
             bar.style.width = i + '%';
             document.getElementById('p-text').innerText = i + '%';
-            await new Promise(r => setTimeout(r, 40));
+            await new Promise(r => setTimeout(r, 80));
         }
 
-        // Clonamos para el PDF
-        const pdfElement = element.cloneNode(true);
-        pdfElement.classList.add('pdf-carta');
+        const pdfClone = element.cloneNode(true);
+        pdfClone.classList.add('pdf-carta');
         
-        // Convertimos inputs a texto para el PDF
-        pdfElement.querySelectorAll('input').forEach(inp => {
-            const val = inp.value;
-            const textNode = document.createElement('span');
-            textNode.innerText = val || "---";
-            textNode.style.color = "#00eaff";
-            inp.replaceWith(textNode);
+        // Agregar marca de agua realzada al clon
+        const wm = pdfClone.querySelector('.watermark');
+        wm.className = 'watermark-pdf';
+
+        pdfClone.querySelectorAll('input').forEach(inp => {
+            const span = document.createElement('span');
+            span.innerText = inp.value || "---";
+            span.style.color = "#00eaff";
+            span.style.fontWeight = "bold";
+            inp.replaceWith(span);
         });
 
         const opt = {
             margin: 0,
-            filename: `EDIMARK_FOLIO_${folioID}.pdf`,
+            filename: `EDIMARK_LOG_${folioID}.pdf`,
             image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 3, useCORS: true, backgroundColor: '#05070a' },
+            html2canvas: { scale: 3, useCORS: true, backgroundColor: '#030508' },
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
 
-        html2pdf().set(opt).from(pdfElement).save().then(() => {
+        html2pdf().set(opt).from(pdfClone).save().then(() => {
             overlay.style.display = 'none';
         });
     }
@@ -263,32 +258,32 @@
             items.push({ d: inps[0].value, c: inps[1].value, p: inps[2].value });
         });
         const data = { f: folioID, cl: document.getElementById("cliente").value, tt: document.getElementById("total").innerText, serv: items, fecha: new Date().toLocaleDateString() };
-        const hist = JSON.parse(localStorage.getItem("hist_v3_carta") || "[]");
+        const hist = JSON.parse(localStorage.getItem("hist_v4") || "[]");
         hist.push(data);
-        localStorage.setItem("hist_v3_carta", JSON.stringify(hist));
-        localStorage.setItem("folio_v3_carta", ++folioID);
+        localStorage.setItem("hist_v4", JSON.stringify(hist));
+        localStorage.setItem("folio_v4", ++folioID);
         location.reload();
     }
 
     function cargarHistorial() {
-        const hist = JSON.parse(localStorage.getItem("hist_v3_carta") || "[]");
+        const hist = JSON.parse(localStorage.getItem("hist_v4") || "[]");
         document.getElementById("historial").innerHTML = hist.reverse().slice(0, 5).map(n => `
             <div class="hist-item">
-                <div><b style="color:var(--neon-azul)">#${n.f}</b><br><small style="font-size:9px">${n.cl}</small></div>
+                <div><b style="color:var(--neon-azul)">#${String(n.f).padStart(6,'0')}</b><br><small style="font-size:9px">${n.cl || 'SIN NOMBRE'}</small></div>
                 <div style="text-align:right">
                     <span style="color:var(--neon-rosa); font-weight:bold">$${n.tt}</span><br>
-                    <button onclick="restaurar(${n.f})" style="background:none; border:1px solid #333; color:#777; font-size:8px; padding:3px; border-radius:3px; cursor:pointer; margin-top:5px;">CARGAR</button>
+                    <button onclick="restaurar(${n.f})" style="background:none; border:1px solid var(--neon-azul); color:var(--neon-azul); font-size:8px; padding:4px 8px; border-radius:5px; cursor:pointer; margin-top:5px;">RESTAURAR</button>
                 </div>
             </div>
         `).join('');
     }
 
     function restaurar(f) {
-        const hist = JSON.parse(localStorage.getItem("hist_v3_carta") || "[]");
+        const hist = JSON.parse(localStorage.getItem("hist_v4") || "[]");
         const n = hist.find(x => x.f == f);
         if(!n) return;
         document.getElementById("cliente").value = n.cl;
-        document.getElementById("folio").innerText = String(n.f).padStart(5, '0');
+        document.getElementById("folio").innerText = String(n.f).padStart(6, '0');
         const tb = document.getElementById("conceptos");
         tb.innerHTML = "";
         n.serv.forEach(s => agregarItem(s.d, s.c, s.p));

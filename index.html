@@ -16,26 +16,25 @@
 
         body { 
             margin: 0; 
-            font-family: 'Orbitron', 'Segoe UI', sans-serif; 
+            font-family: 'Segoe UI', sans-serif; 
             background: var(--fondo); 
             color: var(--texto); 
             padding: 10px;
         }
 
-        .container { max-width: 500px; margin: auto; }
+        .container { max-width: 450px; margin: auto; }
 
-        /* DISEÑO DE LA TARJETA PRINCIPAL */
         .card { 
             background: var(--tarjeta); 
             border-radius: 20px; 
             padding: 20px; 
             border: 2px solid var(--neon-azul);
-            box-shadow: 0 0 20px rgba(0, 234, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 234, 255, 0.2);
             position: relative; 
             overflow: hidden;
         }
 
-        /* INPUTS ESTILO FUTURISTA */
+        /* INPUTS */
         input { 
             width: 100%; padding: 12px; 
             background: rgba(0, 234, 255, 0.05); 
@@ -43,62 +42,52 @@
             color: var(--neon-azul); 
             border-radius: 10px; 
             box-sizing: border-box; 
-            font-size: 16px; margin-bottom: 10px;
+            font-size: 16px; margin-bottom: 8px;
             outline: none;
-            transition: 0.3s;
         }
-        input:focus { border-color: var(--neon-rosa); box-shadow: 0 0 10px rgba(255, 0, 123, 0.4); }
 
-        /* TABLA NEÓN */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; z-index: 1; position: relative; }
-        th { color: var(--neon-rosa); font-size: 11px; text-transform: uppercase; padding: 8px; border-bottom: 2px solid var(--neon-rosa); }
-        td { padding: 10px 5px; border-bottom: 1px solid #1f2937; font-size: 14px; }
+        /* TABLA */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; z-index: 1; position: relative; table-layout: fixed; }
+        th { color: var(--neon-rosa); font-size: 10px; text-transform: uppercase; padding: 5px; border-bottom: 2px solid var(--neon-rosa); }
+        td { padding: 8px 2px; border-bottom: 1px solid #1f2937; font-size: 13px; word-wrap: break-word; }
 
-        /* BOTONES */
-        .btn { 
-            border: none; padding: 15px; border-radius: 12px; 
-            font-weight: bold; cursor: pointer; width: 100%; 
-            margin-top: 10px; font-size: 14px; text-transform: uppercase;
-            transition: 0.3s;
-        }
-        .btn-save { background: var(--neon-rosa); color: white; box-shadow: 0 0 15px rgba(255, 0, 123, 0.5); }
-        .btn-pdf { background: transparent; color: var(--neon-azul); border: 2px solid var(--neon-azul); box-shadow: 0 0 10px rgba(0, 234, 255, 0.2); }
+        .btn { border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; font-size: 14px; text-transform: uppercase; }
+        .btn-save { background: var(--neon-rosa); color: white; }
+        .btn-pdf { background: transparent; color: var(--neon-azul); border: 2px solid var(--neon-azul); }
 
-        /* MARCA DE AGUA CENTRADA */
         .watermark {
             display: none; 
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 260px; opacity: 0.15; z-index: 0; pointer-events: none;
-            filter: drop-shadow(0 0 10px var(--neon-azul));
+            width: 240px; opacity: 0.15; z-index: 0; pointer-events: none;
         }
 
-        /* --- ESTILOS ESPECIALES PARA EL PDF (ESTO ES LA SORPRESA) --- */
+        /* --- CONFIGURACIÓN DE AJUSTE TOTAL PDF --- */
         #area-nota.modo-pdf {
-            background: #000000 !important; /* Fondo negro total para el PDF */
+            background: #000000 !important;
             color: #ffffff !important;
             width: 80mm !important;
-            padding: 8mm !important;
-            border: 4px solid var(--neon-azul) !important;
+            padding: 5mm !important; /* Margen interno para que no toque los bordes */
+            margin: 0 !important;
+            display: block !important;
+            box-sizing: border-box !important;
         }
-        .modo-pdf h2 { color: var(--neon-azul) !important; text-shadow: 0 0 10px var(--neon-azul) !important; }
-        .modo-pdf b, .modo-pdf #total { color: var(--neon-rosa) !important; text-shadow: 0 0 8px var(--neon-rosa) !important; }
+        .modo-pdf * { color: #ffffff !important; text-shadow: none !important; }
+        .modo-pdf h2 { color: var(--neon-azul) !important; text-shadow: 0 0 5px var(--neon-azul) !important; }
+        .modo-pdf b, .modo-pdf #total { color: var(--neon-rosa) !important; text-shadow: 0 0 5px var(--neon-rosa) !important; }
         .modo-pdf .watermark { display: block !important; }
         .modo-pdf .no-print { display: none !important; }
-        .modo-pdf input { color: white !important; background: transparent !important; border: none !important; }
+        .modo-pdf input { background: transparent !important; border: none !important; color: white !important; font-weight: bold; padding: 0; margin: 0; height: auto; }
+        .modo-pdf table { border: 1px solid #333; }
 
-        /* HISTORIAL */
-        .historial-item { 
-            background: #0d1117; padding: 15px; border-radius: 12px; 
-            margin-top: 10px; display: flex; justify-content: space-between; 
-            border: 1px solid #1f2937;
-        }
+        .historial-item { background: #0d1117; padding: 10px; border-radius: 10px; margin-top: 8px; display: flex; justify-content: space-between; border: 1px solid #1f2937; }
 
         @media print {
+            @page { size: 80mm auto; margin: 0; }
             .no-print { display: none !important; }
             body { background: white; }
-            .card { width: 80mm; background: white !important; color: black !important; border: 1px solid black; box-shadow: none; }
+            .card { width: 80mm; background: white !important; color: black !important; border: 1px solid #000; box-shadow: none; }
         }
     </style>
 </head>
@@ -106,66 +95,65 @@
 
 <div class="container">
     <div class="card" id="area-nota">
-        <img src="logo.png" class="watermark" id="watermark">
+        <img src="logo.png" class="watermark">
 
-        <div style="text-align: center; margin-bottom: 20px; position: relative; z-index: 1;">
-            <h2 style="margin:0; color:var(--neon-azul); letter-spacing: 3px; font-size: 28px;">EDIMARK</h2>
-            <div style="font-size: 9px; color: var(--neon-rosa); letter-spacing: 4px; font-weight: bold;">SYSTEM PROTOCOL v2.0</div>
-            <div style="margin-top:15px; border-top: 1px double var(--neon-azul); padding-top: 10px; font-size: 12px;">
-                ID: <span id="folio" style="color:var(--neon-azul)"></span> | <span id="fechaActual"></span>
+        <div style="text-align: center; margin-bottom: 15px; position: relative; z-index: 1;">
+            <h2 style="margin:0; color:var(--neon-azul); letter-spacing: 2px;">EDIMARK</h2>
+            <div style="font-size: 9px; color: var(--neon-rosa); font-weight: bold;">NEO-TECH PROTOCOL</div>
+            <div style="margin-top:10px; border-top: 1px solid var(--neon-azul); padding-top: 5px; font-size: 11px;">
+                FOLIO: <span id="folio" style="color:var(--neon-azul)"></span> | <span id="fechaActual"></span>
             </div>
         </div>
 
         <div style="position: relative; z-index: 1;">
-            <input id="cliente" placeholder="USUARIO / CLIENTE">
-            <div style="display:flex; gap:8px">
-                <input id="modelo" placeholder="HARDWARE ID">
-                <input id="imei" placeholder="SERIAL / IMEI">
+            <input id="cliente" placeholder="CLIENTE">
+            <div style="display:flex; gap:5px">
+                <input id="modelo" placeholder="MODELO">
+                <input id="imei" placeholder="IMEI / SERIAL">
             </div>
 
             <table>
                 <thead>
                     <tr>
-                        <th style="text-align: left;">MÓDULO</th>
-                        <th style="width: 40px;">QTY</th>
-                        <th style="width: 80px;">CRÉDITOS</th>
-                        <th class="no-print" style="width: 30px;"></th>
+                        <th style="width: 50%; text-align: left;">CONCEPTO</th>
+                        <th style="width: 15%;">CANT</th>
+                        <th style="width: 35%;">$ TOTAL</th>
+                        <th class="no-print" style="width: 10%;"></th>
                     </tr>
                 </thead>
                 <tbody id="conceptos"></tbody>
             </table>
 
-            <button class="btn no-print" style="background:rgba(0, 234, 255, 0.1); color:var(--neon-azul); border: 1px solid var(--neon-azul);" onclick="agregarItem()">+ AÑADIR REGISTRO</button>
+            <button class="btn no-print" style="background:rgba(0, 234, 255, 0.1); color:var(--neon-azul); border: 1px dashed var(--neon-azul); padding: 8px;" onclick="agregarItem()">+ AGREGAR SERVICIO</button>
 
-            <div style="text-align: right; margin-top: 20px; border-top: 2px solid var(--neon-azul); padding-top: 15px;">
-                <div class="no-print" style="font-size:11px; margin-bottom: 10px;">
-                    <label><input type="checkbox" id="iva" onchange="calcular()" style="width:auto"> ACTIVAR IVA 16%</label>
+            <div style="text-align: right; margin-top: 15px; border-top: 1px solid var(--neon-azul); padding-top: 10px;">
+                <div class="no-print" style="font-size:11px; margin-bottom: 5px;">
+                    <label><input type="checkbox" id="iva" onchange="calcular()" style="width:auto"> IVA 16%</label>
                 </div>
-                <div style="font-size: 14px; opacity: 0.7;">TOTAL NETO:</div>
-                <b style="font-size: 32px; color: var(--neon-rosa);">$<span id="total">0.00</span></b>
+                <b style="font-size: 24px; color: var(--neon-rosa);">$<span id="total">0.00</span></b>
             </div>
 
-            <div style="margin-top: 30px; font-size: 9px; text-align: center; color: var(--neon-azul); text-transform: uppercase;">
-                * ADVERTENCIA: EQUIPOS MOJADOS SIN GARANTÍA *<br>
-                * PROTOCOLO DE SALIDA COMPLETADO *
+            <div style="margin-top: 20px; font-size: 9px; text-align: center; color: var(--neon-azul); opacity: 0.8;">
+                * EQUIPOS MOJADOS SIN GARANTÍA *<br>
+                * SISTEMA DE TICKETS EDIMARK *
             </div>
         </div>
 
-        <div class="no-print" style="margin-top: 20px;">
-            <button class="btn btn-save" onclick="guardarTodo()">💾 REGISTRAR EN MEMORIA</button>
-            <button class="btn btn-pdf" onclick="descargarNeoPDF()">📄 GENERAR NEO-TICKET (PDF)</button>
+        <div class="no-print" style="margin-top: 15px;">
+            <button class="btn btn-save" onclick="guardarTodo()">💾 GUARDAR</button>
+            <button class="btn btn-pdf" onclick="descargarNeoPDF()">📄 GENERAR PDF AJUSTADO</button>
         </div>
     </div>
 
-    <div class="card no-print" style="margin-top: 20px; border-color: #333;">
-        <h4 style="margin:0; color:var(--neon-rosa)">LOG DE MEMORIA</h4>
+    <div class="card no-print" style="margin-top: 15px; border-color: #333;">
+        <h4 style="margin:0; color:var(--neon-rosa); font-size: 12px;">HISTORIAL RECIENTE</h4>
         <div id="historial"></div>
     </div>
 </div>
 
 <script>
-    let folioActual = parseInt(localStorage.getItem("folio_neo")) || 1;
-    document.getElementById("folio").innerText = String(folioActual).padStart(5, '0');
+    let folioActual = parseInt(localStorage.getItem("folio_neo_v2")) || 1;
+    document.getElementById("folio").innerText = String(folioActual).padStart(4, '0');
     document.getElementById("fechaActual").innerText = new Date().toLocaleDateString();
 
     function agregarItem(d="", c=1, p=0) {
@@ -174,7 +162,7 @@
             <td><input value="${d}" placeholder="..."></td>
             <td><input type="number" value="${c}" oninput="calcular()" style="text-align:center"></td>
             <td><input type="number" value="${p}" oninput="calcular()" style="text-align:center"></td>
-            <td class="no-print"><button onclick="this.closest('tr').remove();calcular()" style="color:var(--neon-rosa); background:none; border:none; font-size:20px; cursor:pointer;">×</button></td>
+            <td class="no-print"><button onclick="this.closest('tr').remove();calcular()" style="color:var(--neon-rosa); background:none; border:none; font-size:18px;">×</button></td>
         `;
         document.getElementById("conceptos").appendChild(tr);
         calcular();
@@ -192,16 +180,24 @@
 
     function descargarNeoPDF() {
         const element = document.getElementById("area-nota");
-        const cliente = document.getElementById("cliente").value || "UNNAMED";
+        const cliente = document.getElementById("cliente").value || "Cliente";
         
         element.classList.add("modo-pdf");
-        const altoEnMm = (element.scrollHeight * 0.2645) + 20;
+        
+        // Ajuste dinámico de altura para evitar cortes
+        const altoEnMm = (element.scrollHeight * 0.2645) + 15;
 
         const opt = {
             margin: 0,
-            filename: `NEO_TICKET_${folioActual}.pdf`,
+            filename: `NeoTicket_${folioActual}.pdf`,
             image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 3, useCORS: true, backgroundColor: '#000000' },
+            html2canvas: { 
+                scale: 2.5, 
+                useCORS: true, 
+                backgroundColor: '#000000',
+                width: 302, // 80mm exactos en pantalla
+                windowWidth: 302
+            },
             jsPDF: { unit: 'mm', format: [80, altoEnMm], orientation: 'portrait' }
         };
 
@@ -216,50 +212,22 @@
             const inputs = tr.querySelectorAll('input');
             items.push({ d: inputs[0].value, c: inputs[1].value, p: inputs[2].value });
         });
-
-        const nota = {
-            f: folioActual,
-            cl: document.getElementById("cliente").value,
-            mod: document.getElementById("modelo").value,
-            im: document.getElementById("imei").value,
-            tt: document.getElementById("total").innerText,
-            fecha: new Date().toLocaleString(),
-            serv: items
-        };
-
-        const hist = JSON.parse(localStorage.getItem("historial_neo") || "[]");
+        const nota = { f: folioActual, cl: document.getElementById("cliente").value, tt: document.getElementById("total").innerText, serv: items };
+        const hist = JSON.parse(localStorage.getItem("historial_neo_v2") || "[]");
         hist.push(nota);
-        localStorage.setItem("historial_neo", JSON.stringify(hist));
-        localStorage.setItem("folio_neo", ++folioActual);
-        
-        alert("DATOS ENCRIPTADOS Y GUARDADOS");
+        localStorage.setItem("historial_neo_v2", JSON.stringify(hist));
+        localStorage.setItem("folio_neo_v2", ++folioActual);
         location.reload();
     }
 
     function cargarHistorial() {
-        const hist = JSON.parse(localStorage.getItem("historial_neo") || "[]");
-        const container = document.getElementById("historial");
-        container.innerHTML = hist.reverse().slice(0, 5).map(n => `
+        const hist = JSON.parse(localStorage.getItem("historial_neo_v2") || "[]");
+        document.getElementById("historial").innerHTML = hist.reverse().slice(0, 5).map(n => `
             <div class="historial-item">
-                <div style="font-size:11px"><b style="color:var(--neon-azul)">#${n.f}</b><br>${n.cl}</div>
-                <div style="text-align:right">
-                    <b style="color:var(--neon-rosa)">$${n.tt}</b><br>
-                    <button onclick="recuperar(${n.f})" style="font-size:9px; background:none; border:1px solid var(--neon-azul); color:var(--neon-azul); padding:2px 5px; border-radius:4px; margin-top:5px;">RESTAURAR</button>
-                </div>
+                <div style="font-size:11px"><b>#${n.f}</b> - ${n.cl}</div>
+                <b style="color:var(--neon-rosa)">$${n.tt}</b>
             </div>
         `).join('');
-    }
-
-    function recuperar(f) {
-        const hist = JSON.parse(localStorage.getItem("historial_neo") || "[]");
-        const n = hist.find(x => x.f == f);
-        document.getElementById("cliente").value = n.cl;
-        document.getElementById("modelo").value = n.mod;
-        document.getElementById("imei").value = n.im;
-        document.getElementById("folio").innerText = String(n.f).padStart(5, '0');
-        const tbody = document.getElementById("conceptos");
-        tbody.innerHTML = "";
-        n.serv.forEach(s => agregarItem(s.d, s.c, s.p));
     }
 
     window.onload = () => { agregarItem(); cargarHistorial(); };

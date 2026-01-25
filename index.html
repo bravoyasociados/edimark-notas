@@ -8,15 +8,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <meta property="og:title" content="EDIMARK | Neo-System Pro">
-    <meta property="og:description" content="Protocolo Digital de Servicio Técnico Especializado.">
-    <meta property="og:image" content="logo.png">
-
     <title>EDIMARK | Pro-System</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        /* Tipografía Legible para datos y Orbitron para títulos */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@400;700&display=swap');
 
         :root { 
             --fondo: #030508; 
@@ -24,9 +21,18 @@
             --neon-azul: #00eaff; 
             --neon-rosa: #ff007b; 
             --texto: #d1d9e0;
+            --fuente-lectura: 'Inter', sans-serif;
+            --fuente-titulo: 'Orbitron', sans-serif;
         }
 
-        body { margin: 0; font-family: 'Orbitron', sans-serif; background: var(--fondo); color: var(--texto); overflow-x: hidden; font-size: 14px; }
+        body { 
+            margin: 0; 
+            font-family: var(--fuente-lectura); 
+            background: var(--fondo); 
+            color: var(--texto); 
+            overflow-x: hidden; 
+            font-size: 15px; 
+        }
 
         /* --- LOADER --- */
         #loader {
@@ -34,23 +40,22 @@
             background: var(--fondo); z-index: 9999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
-        .logo-box { position: relative; width: 100px; height: 100px; display: flex; justify-content: center; align-items: center; }
         .ring {
-            position: absolute; width: 100%; height: 100%;
+            position: absolute; width: 80px; height: 80px;
             border: 2px solid transparent; border-top: 2px solid var(--neon-azul);
             border-bottom: 2px solid var(--neon-rosa); border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        .logo-img { width: 50px; height: 50px; animation: flip 3s ease-in-out infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes flip { 0%, 100% { transform: rotateY(0deg); } 50% { transform: rotateY(360deg); } }
 
         /* --- TÍTULO ANIMADO --- */
         .main-title { 
+            font-family: var(--fuente-titulo);
             color: var(--neon-azul); margin: 0; font-size: 26px; letter-spacing: 3px; 
             text-shadow: 0 0 10px rgba(0,234,255,0.7); animation: flicker 4s linear infinite; display: inline-block;
         }
         @keyframes flicker { 0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; } 20%, 24%, 55% { opacity: 0.3; } }
+        
         .drop-bounce { animation: dropBounce 1s cubic-bezier(0.36, 0, 0.66, -0.56) forwards !important; }
         @keyframes dropBounce {
             0% { transform: translateY(-100px); opacity: 0; }
@@ -59,14 +64,6 @@
             100% { transform: translateY(0); opacity: 1; }
         }
 
-        /* --- UI --- */
-        #download-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 8000; flex-direction: column; justify-content: center; align-items: center;
-        }
-        .p-bar-bg { width: 200px; height: 3px; background: #111; border: 1px solid var(--neon-azul); margin-top: 15px; }
-        .p-bar-fill { width: 0%; height: 100%; background: var(--neon-azul); }
-
         .container { max-width: 800px; margin: auto; padding: 15px; display: none; }
         .card { 
             background: var(--tarjeta); border-radius: 12px; padding: 25px; 
@@ -74,85 +71,85 @@
         }
 
         input { 
-            width: 100%; padding: 10px; background: #000; border: 1px solid #1f2937; 
-            color: var(--neon-azul); border-radius: 6px; box-sizing: border-box; 
-            margin-bottom: 10px; font-family: 'Orbitron', sans-serif; font-size: 12px; outline: none;
+            width: 100%; padding: 12px; background: #000; border: 1px solid #1f2937; 
+            color: #fff; border-radius: 6px; box-sizing: border-box; 
+            margin-bottom: 10px; font-family: var(--fuente-lectura); font-size: 14px; outline: none;
         }
+        input:focus { border-color: var(--neon-azul); }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 11px; z-index: 5; position: relative; }
-        th { color: var(--neon-rosa); text-align: left; padding: 10px; border-bottom: 1px solid var(--neon-rosa); }
-        td { padding: 8px 10px; border-bottom: 1px solid #1f2937; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; position: relative; z-index: 10; }
+        th { font-family: var(--fuente-titulo); color: var(--neon-rosa); text-align: left; padding: 12px; border-bottom: 1px solid var(--neon-rosa); font-size: 12px; }
+        td { padding: 10px; border-bottom: 1px solid #1f2937; }
 
-        .btn { border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; text-transform: uppercase; font-family: 'Orbitron', sans-serif; font-size: 11px; }
+        .btn { border: none; padding: 15px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 10px; text-transform: uppercase; font-family: var(--fuente-titulo); font-size: 11px; letter-spacing: 1px; }
         .btn-save { background: var(--neon-rosa); color: white; }
         .btn-pdf { background: transparent; color: var(--neon-azul); border: 1px solid var(--neon-azul); }
 
-        /* --- PDF EXCLUSIVO --- */
+        /* --- CONFIGURACIÓN PDF --- */
         .pdf-carta {
             background-color: #030508 !important;
-            width: 215.9mm !important;
-            height: 279.4mm !important;
-            padding: 20mm !important;
+            width: 215.9mm !important; /* Ancho exacto Carta */
+            height: 279.4mm !important; /* Alto exacto Carta */
+            padding: 25mm 15mm !important;
             box-sizing: border-box !important;
-            border: 5px solid var(--neon-azul) !important;
+            border: 8px solid var(--neon-azul) !important;
             position: relative !important;
-            display: block !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: flex-start !important;
         }
-        .pdf-carta .watermark-pdf { 
-            display: block !important;
-            opacity: 0.25 !important; 
-            width: 500px !important;
+
+        /* Logo centrado en el medio de la hoja */
+        .pdf-marca-agua {
             position: absolute !important;
             top: 50% !important;
             left: 50% !important;
-            transform: translate(-50%, -50%) rotate(-15deg) !important;
-            filter: brightness(1.2) !important;
-            z-index: 1 !important;
+            transform: translate(-50%, -50%) !important;
+            width: 500px !important;
+            opacity: 0.20 !important;
+            z-index: 0 !important;
+            pointer-events: none !important;
         }
-        .pdf-carta .no-print { display: none !important; visibility: hidden !important; }
-        .pdf-carta * { color: #fff !important; z-index: 5; }
 
-        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 350px; opacity: 0.03; pointer-events: none; z-index: 1; }
-        .hist-item { background: #07090d; padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; border: 1px solid #141b24; align-items: center; font-size: 10px; }
-        .total-final { font-size: 28px; color: var(--neon-rosa); text-shadow: 0 0 10px rgba(255,0,123,0.3); }
+        .pdf-carta * { color: #fff !important; z-index: 10; position: relative; }
+        .pdf-carta .no-print { display: none !important; }
+
+        .watermark-ui { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; opacity: 0.03; pointer-events: none; z-index: 1; }
+        .hist-item { background: #07090d; padding: 12px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; border: 1px solid #141b24; align-items: center; font-size: 13px; }
     </style>
 </head>
 <body>
 
 <div id="loader">
-    <div class="logo-box"><div class="ring"></div><img src="logo.png" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2991/2991148.png'"></div>
-</div>
-
-<div id="download-overlay">
-    <h3 style="color:var(--neon-azul); letter-spacing: 3px; font-size: 12px;">ENCRIPTANDO PDF...</h3>
-    <div class="p-bar-bg"><div class="p-bar-fill" id="p-bar"></div></div>
+    <div class="ring"></div>
+    <img src="logo.png" style="width:50px" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2991/2991148.png'">
 </div>
 
 <div class="container" id="main-content">
     <div class="card" id="area-nota">
-        <img src="logo.png" class="watermark" id="bg-logo">
+        <img src="logo.png" class="watermark-ui">
         
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; position: relative; z-index: 10;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; position: relative; z-index: 10;">
             <div>
                 <h1 id="brand-title" class="main-title">EDIMARK</h1>
-                <p style="color:var(--neon-rosa); font-size: 8px; letter-spacing: 2px;">NEO-TECHNOLOGY REPAIR</p>
+                <p style="font-family: var(--fuente-titulo); color:var(--neon-rosa); font-size: 9px; letter-spacing: 2px; margin: 5px 0 0 0;">NEO-TECHNOLOGY REPAIR</p>
             </div>
-            <div style="text-align: right;">
-                <p style="margin:0; font-size: 11px; color: var(--neon-azul);">FOLIO: <span id="folio"></span></p>
-                <p style="margin:3px 0; font-size: 8px; opacity: 0.6;" id="fechaActual"></p>
+            <div style="text-align: right; font-family: var(--fuente-titulo);">
+                <p style="margin:0; font-size: 12px; color: var(--neon-azul);">FOLIO: <span id="folio"></span></p>
+                <p style="margin:3px 0; font-size: 9px; opacity: 0.6;" id="fechaActual"></p>
             </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; position: relative; z-index: 10;">
-            <input id="cliente" placeholder="> CLIENTE">
-            <input id="modelo" placeholder="> MODELO">
+            <input id="cliente" placeholder="Nombre del Cliente">
+            <input id="modelo" placeholder="Modelo del Equipo">
         </div>
-        <input id="imei" placeholder="> IMEI / SERIAL NUMBER" style="position: relative; z-index: 10;">
+        <input id="imei" placeholder="IMEI o Número de Serie" style="position: relative; z-index: 10;">
 
-        <table id="tabla-servicios">
+        <table>
             <thead>
                 <tr>
-                    <th style="width: 60%;">SERVICIO</th>
+                    <th style="width: 60%;">DESCRIPCIÓN DEL SERVICIO</th>
                     <th style="width: 15%; text-align: center;">CANT</th>
                     <th style="width: 25%; text-align: right;">PRECIO</th>
                 </tr>
@@ -160,24 +157,24 @@
             <tbody id="conceptos"></tbody>
         </table>
 
-        <button id="btn-add" class="btn no-print" style="background:rgba(0,234,255,0.05); color:var(--neon-azul); border:1px dashed var(--neon-azul);" onclick="agregarItem()">+ AÑADIR CONCEPTO</button>
+        <button class="btn no-print" style="background:rgba(0,234,255,0.05); color:var(--neon-azul); border:1px dashed var(--neon-azul); margin-top: 15px;" onclick="agregarItem()">+ AGREGAR SERVICIO</button>
 
-        <div style="margin-top: 30px; display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 10;">
-            <div style="font-size: 8px; color: #505c69; line-height: 1.5;">
-                * GARANTÍA: 30 DÍAS.<br>
-                * NO APLICA EN EQUIPOS MOJADOS.<br>
-                * DOCUMENTO DIGITAL OFICIAL.
+        <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 10;">
+            <div style="font-size: 10px; color: #88929b; line-height: 1.6; font-weight: 400;">
+                * GARANTÍA LIMITADA: 30 DÍAS.<br>
+                * EQUIPOS MOJADOS NO TIENEN GARANTÍA.<br>
+                * COMPROBANTE DE SERVICIO DIGITAL.
             </div>
             
             <div style="text-align: right;">
                 <div class="no-print" style="margin-bottom: 10px;">
-                    <label style="font-size: 10px; cursor:pointer; color:var(--neon-azul);">
-                        <input type="checkbox" id="iva-check" onchange="calcular()" style="width:auto"> + IVA (16%)
+                    <label style="font-size: 11px; cursor:pointer; color:var(--neon-azul);">
+                        <input type="checkbox" id="iva-check" onchange="calcular()" style="width:auto"> Aplicar IVA (16%)
                     </label>
                 </div>
-                <div style="font-size: 11px; opacity: 0.8;">SUBTOTAL: $<span id="subtotal">0.00</span></div>
-                <div style="font-size: 11px; opacity: 0.8; display:none;" id="iva-row">IVA (16%): $<span id="iva-monto">0.00</span></div>
-                <div class="total-final">$<span id="total">0.00</span></div>
+                <div style="font-size: 13px; opacity: 0.7;">SUBTOTAL: $<span id="subtotal">0.00</span></div>
+                <div style="font-size: 13px; opacity: 0.7; display:none;" id="iva-row">IVA: $<span id="iva-monto">0.00</span></div>
+                <div style="font-family: var(--fuente-titulo); font-size: 30px; color: var(--neon-rosa); margin-top: 5px;">$<span id="total">0.00</span></div>
             </div>
         </div>
     </div>
@@ -188,7 +185,7 @@
     </div>
 
     <div class="card no-print" style="margin-top: 20px; border-color: #1f2937; padding: 15px;">
-        <h3 style="margin:0 0 10px 0; color:var(--neon-azul); font-size: 11px;">HISTORIAL</h3>
+        <h3 style="margin:0 0 10px 0; color:var(--neon-azul); font-size: 11px; font-family: var(--fuente-titulo);">HISTORIAL RECIENTE</h3>
         <div id="historial"></div>
     </div>
 </div>
@@ -199,7 +196,7 @@
             document.getElementById('loader').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
             iniciarEfectoRebote();
-        }, 2000);
+        }, 1500);
         agregarItem();
         cargarHistorial();
     });
@@ -212,14 +209,14 @@
         }, 5000); 
     }
 
-    let folioNum = parseInt(localStorage.getItem("f_v7")) || 1;
+    let folioNum = parseInt(localStorage.getItem("f_v8")) || 1;
     document.getElementById("folio").innerText = String(folioNum).padStart(5, '0');
     document.getElementById("fechaActual").innerText = new Date().toLocaleDateString();
 
     function agregarItem(d="", c=1, p=0) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-            <td><input value="${d}" placeholder="..."></td>
+            <td><input value="${d}" placeholder="Ej. Cambio de Pantalla"></td>
             <td><input type="number" value="${c}" oninput="calcular()" style="text-align:center"></td>
             <td><input type="number" value="${p}" oninput="calcular()" style="text-align:right"></td>
         `;
@@ -244,44 +241,35 @@
     }
 
     async function generarPDFMaster() {
-        const overlay = document.getElementById('download-overlay');
-        const bar = document.getElementById('p-bar');
         const element = document.getElementById('area-nota');
-        overlay.style.display = 'flex';
-        for(let i = 0; i <= 100; i += 33) { bar.style.width = i + '%'; await new Promise(r => setTimeout(r, 60)); }
-
         const pdfClone = element.cloneNode(true);
+        
+        // Limpieza y Estilo PDF
         pdfClone.classList.add('pdf-carta');
         
-        // Ajuste Logo Centrado
-        const logo = pdfClone.querySelector('#bg-logo');
-        logo.className = 'watermark-pdf';
+        // Crear el logo centrado solo para el PDF
+        const logoPDF = document.createElement('img');
+        logoPDF.src = 'logo.png';
+        logoPDF.className = 'pdf-marca-agua';
+        pdfClone.appendChild(logoPDF);
 
-        // Eliminar botones y campos innecesarios
         pdfClone.querySelectorAll('.no-print').forEach(el => el.remove());
-
-        // Convertir inputs a texto plano
         pdfClone.querySelectorAll('input').forEach(inp => {
             const span = document.createElement('span');
             span.innerText = inp.value || "---";
-            span.style.color = "#00eaff";
+            span.style.borderBottom = "1px solid #333";
+            span.style.padding = "2px 5px";
             inp.replaceWith(span);
         });
 
         const opt = {
             margin: 0,
-            filename: `EDIMARK_FOLIO_${folioNum}.pdf`,
-            image: { type: 'jpeg', quality: 1 },
+            filename: `Ticket_EDIMARK_${folioNum}.pdf`,
             html2canvas: { scale: 3, useCORS: true, backgroundColor: '#030508' },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
         };
 
-        const worker = html2pdf().set(opt).from(pdfClone);
-        worker.save();
-        worker.toPdf().output('bloburl').then((url) => {
-            overlay.style.display = 'none';
-            window.open(url, '_blank');
-        });
+        html2pdf().set(opt).from(pdfClone).save();
     }
 
     function guardarRegistro() {
@@ -296,37 +284,36 @@
             tt: document.getElementById("total").innerText, serv: items, 
             conIVA: document.getElementById("iva-check").checked
         };
-        const hist = JSON.parse(localStorage.getItem("h_v7") || "[]");
+        const hist = JSON.parse(localStorage.getItem("h_v8") || "[]");
         hist.push(data);
-        localStorage.setItem("h_v7", JSON.stringify(hist));
-        localStorage.setItem("f_v7", ++folioNum);
+        localStorage.setItem("h_v8", JSON.stringify(hist));
+        localStorage.setItem("f_v8", ++folioNum);
         location.reload();
     }
 
     function cargarHistorial() {
-        const hist = JSON.parse(localStorage.getItem("h_v7") || "[]");
+        const hist = JSON.parse(localStorage.getItem("h_v8") || "[]");
         document.getElementById("historial").innerHTML = hist.reverse().slice(0, 5).map(n => `
             <div class="hist-item">
-                <div><b>#${String(n.f).padStart(5,'0')}</b> - ${n.cl || 'N/A'}</div>
-                <button onclick="restaurar(${n.f})" style="background:none; border:1px solid var(--neon-azul); color:var(--neon-azul); font-size:8px; padding:3px 6px; border-radius:4px; cursor:pointer;">ABRIR</button>
+                <div><b>#${String(n.f).padStart(5,'0')}</b> - ${n.cl || 'Sin Nombre'}</div>
+                <button onclick="restaurar(${n.f})" style="background:none; border:1px solid var(--neon-azul); color:var(--neon-azul); font-size:10px; padding:5px 10px; border-radius:4px; cursor:pointer;">ABRIR</button>
             </div>
         `).join('');
     }
 
     function restaurar(f) {
-        const hist = JSON.parse(localStorage.getItem("h_v7") || "[]");
+        const hist = JSON.parse(localStorage.getItem("h_v8") || "[]");
         const n = hist.find(x => x.f == f);
         if(!n) return;
-        document.getElementById("cliente").value = n.cl || "";
-        document.getElementById("modelo").value = n.mod || "";
-        document.getElementById("imei").value = n.im || "";
+        document.getElementById("cliente").value = n.cl;
+        document.getElementById("modelo").value = n.mod;
+        document.getElementById("imei").value = n.im;
         document.getElementById("folio").innerText = String(n.f).padStart(5, '0');
-        document.getElementById("iva-check").checked = n.conIVA || false;
+        document.getElementById("iva-check").checked = n.conIVA;
         const tb = document.getElementById("conceptos");
         tb.innerHTML = "";
         n.serv.forEach(s => agregarItem(s.d, s.c, s.p));
         calcular();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
 </body>

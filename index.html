@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EDIMARK | Neo-Carta</title>
+    <title>EDIMARK | Neo-System</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
@@ -16,156 +16,168 @@
             --texto: #e0e6ed;
         }
 
-        body { margin: 0; font-family: 'Orbitron', sans-serif; background: var(--fondo); color: var(--texto); }
+        body { margin: 0; font-family: 'Orbitron', sans-serif; background: var(--fondo); color: var(--texto); overflow-x: hidden; }
 
-        /* --- OVERLAY DE CARGA DE PÁGINA --- */
+        /* --- LOADER INICIAL MEJORADO --- */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--fondo); z-index: 5000;
+            background: var(--fondo); z-index: 9999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
+        .logo-container {
+            position: relative; width: 120px; height: 120px;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .logo-spin {
+            width: 100%; height: 100%;
+            border: 4px solid rgba(0, 234, 255, 0.1);
+            border-top: 4px solid var(--neon-azul);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: absolute;
+        }
+        .logo-img { width: 70px; height: 70px; object-fit: contain; z-index: 10; }
 
-        /* --- BARRA DE PROGRESO DESCARGA --- */
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- BARRA DE DESCARGA --- */
         #download-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 6000;
+            background: rgba(0,0,0,0.95); z-index: 8000;
             flex-direction: column; justify-content: center; align-items: center;
         }
-        .p-container { width: 80%; max-width: 400px; height: 6px; background: #111; border: 1px solid var(--neon-azul); border-radius: 10px; margin-top: 15px; overflow: hidden;}
+        .p-container { width: 280px; height: 8px; background: #111; border: 1px solid var(--neon-azul); border-radius: 10px; margin-top: 20px; overflow: hidden; }
         .p-bar { width: 0%; height: 100%; background: var(--neon-azul); box-shadow: 0 0 15px var(--neon-azul); }
 
-        /* --- ANIMACIÓN NEÓN --- */
-        .flicker { animation: flicker 2s linear infinite; color: var(--neon-azul); text-shadow: 0 0 15px var(--neon-azul); }
+        /* --- UI ELEMENTS --- */
+        .container { max-width: 800px; margin: auto; padding: 20px; display: none; }
+        .flicker { animation: flicker 3s linear infinite; color: var(--neon-azul); text-shadow: 0 0 15px var(--neon-azul); }
         @keyframes flicker { 0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; } 20%, 24%, 55% { opacity: 0.3; } }
 
-        .container { max-width: 800px; margin: auto; padding: 20px; opacity: 0; transition: 1s ease; }
         .card { 
-            background: var(--tarjeta); border-radius: 15px; padding: 40px; 
+            background: var(--tarjeta); border-radius: 15px; padding: 35px; 
             border: 1px solid var(--neon-azul); box-shadow: 0 0 30px rgba(0, 234, 255, 0.1);
-            position: relative; min-height: 850px; /* Simula proporción vertical */
+            position: relative;
         }
 
         input { 
-            width: 100%; padding: 12px; background: rgba(0,0,0,0.5); 
-            border: 1px solid #1f2937; color: var(--neon-azul); 
-            border-radius: 5px; box-sizing: border-box; margin-bottom: 12px;
-            font-family: 'Orbitron', sans-serif; outline: none;
+            width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #1f2937; 
+            color: var(--neon-azul); border-radius: 5px; box-sizing: border-box; 
+            margin-bottom: 12px; font-family: 'Orbitron', sans-serif; outline: none;
         }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 30px; }
-        th { color: var(--neon-rosa); text-align: left; padding: 10px; border-bottom: 2px solid var(--neon-rosa); font-size: 14px; }
-        td { padding: 12px 10px; border-bottom: 1px solid #1f2937; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { color: var(--neon-rosa); text-align: left; padding: 10px; border-bottom: 2px solid var(--neon-rosa); font-size: 13px; }
+        td { padding: 10px; border-bottom: 1px solid #1f2937; }
 
-        .btn { border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; text-transform: uppercase; font-family: 'Orbitron', sans-serif; transition: 0.3s; }
-        .btn-save { background: var(--neon-rosa); color: white; box-shadow: 0 0 15px rgba(255, 0, 123, 0.3); }
+        .btn { border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; text-transform: uppercase; font-family: 'Orbitron', sans-serif; }
+        .btn-save { background: var(--neon-rosa); color: white; box-shadow: 0 0 15px rgba(255,0,123,0.3); }
         .btn-pdf { background: transparent; color: var(--neon-azul); border: 2px solid var(--neon-azul); }
 
-        /* --- AJUSTE ESTRICTO PARA PDF TAMAÑO CARTA --- */
-        #area-nota.pdf-render {
+        /* MODO PDF CARTA VERTICAL */
+        .pdf-render-zone {
+            background: #000 !important;
             width: 216mm !important;
             height: 279mm !important;
-            background: #000 !important;
             padding: 20mm !important;
             box-sizing: border-box !important;
-            position: fixed; top: 0; left: 0; z-index: -1000;
         }
-        .pdf-render * { color: #fff !important; }
-        .pdf-render input { background: transparent !important; border: none !important; font-size: 18px !important; }
-        .pdf-render .no-print { display: none !important; }
-        .pdf-render .flicker { text-shadow: 0 0 5px #00eaff !important; }
+        .pdf-render-zone * { color: #fff !important; text-shadow: none !important; }
+        .pdf-render-zone input { border: none !important; background: transparent !important; }
 
-        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; opacity: 0.05; z-index: 0; }
-
-        .hist-item { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; margin-top: 10px; display: flex; justify-content: space-between; border-left: 4px solid var(--neon-azul); }
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 350px; opacity: 0.05; pointer-events: none; }
+        .hist-item { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; margin-top: 10px; display: flex; justify-content: space-between; border-left: 3px solid var(--neon-rosa); }
     </style>
 </head>
 <body>
 
 <div id="loader">
-    <div style="width: 60px; height: 60px; border: 4px solid var(--neon-rosa); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-    <p style="margin-top:20px; color:var(--neon-azul); letter-spacing:10px; font-size: 10px;">BOOTING SYSTEM...</p>
+    <div class="logo-container">
+        <div class="logo-spin"></div>
+        <img src="logo.png" class="logo-img" onerror="this.style.display='none'">
+    </div>
+    <p style="margin-top:25px; color:var(--neon-azul); letter-spacing:8px; font-size: 10px;">INICIANDO NÚCLEO...</p>
 </div>
 
 <div id="download-overlay">
-    <h2 style="color:var(--neon-azul); letter-spacing: 5px;">GENERANDO CARTA PDF</h2>
+    <h3 style="color:var(--neon-azul); letter-spacing: 4px;">ENCRIPTANDO CARTA PDF</h3>
     <div class="p-container"><div class="p-bar" id="p-bar"></div></div>
-    <p id="p-text" style="color:var(--neon-rosa); margin-top: 10px;">0%</p>
+    <p id="p-text" style="color:var(--neon-rosa); margin-top:10px;">0%</p>
 </div>
 
 <div class="container" id="main-content">
     <div class="card" id="area-nota">
         <img src="logo.png" class="watermark">
         
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 50px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
             <div>
-                <h1 class="flicker" style="margin:0; font-size: 35px; letter-spacing: 5px;">EDIMARK</h1>
-                <p style="color:var(--neon-rosa); font-size: 10px;">HIGH-END REPAIR PROTOCOL</p>
+                <h1 class="flicker" style="margin:0; font-size: 30px;">EDIMARK</h1>
+                <p style="color:var(--neon-rosa); font-size: 9px; letter-spacing: 2px;">NEO-TECHNOLOGY SOLUTIONS</p>
             </div>
-            <div style="text-align: right;">
-                <p style="margin:0; font-size: 12px;">ID: <span id="folio" style="color:var(--neon-azul)"></span></p>
-                <p style="margin:0; font-size: 12px;">DATE: <span id="fechaActual"></span></p>
+            <div style="text-align: right; font-size: 12px;">
+                <p style="margin:2px 0;">FOLIO: <span id="folio" style="color:var(--neon-azul)"></span></p>
+                <p style="margin:2px 0;">DATE: <span id="fechaActual"></span></p>
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <input id="cliente" placeholder="> CLIENTE">
-            <input id="modelo" placeholder="> MODELO / DISPOSITIVO">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <input id="cliente" placeholder="> USUARIO">
+            <input id="modelo" placeholder="> DISPOSITIVO">
         </div>
-        <input id="imei" placeholder="> IMEI / NÚMERO DE SERIE">
+        <input id="imei" placeholder="> SERIAL / IMEI">
 
         <table>
             <thead>
                 <tr>
-                    <th style="width: 60%;">DESCRIPCIÓN</th>
+                    <th style="width: 60%;">CONCEPTO</th>
                     <th style="width: 15%; text-align: center;">CANT</th>
-                    <th style="width: 25%; text-align: right;">SUBTOTAL</th>
+                    <th style="width: 25%; text-align: right;">PRECIO</th>
                 </tr>
             </thead>
             <tbody id="conceptos"></tbody>
         </table>
 
-        <button class="btn no-print" style="background:rgba(0,234,255,0.05); color:var(--neon-azul); border:1px dashed var(--neon-azul); font-size: 11px;" onclick="agregarItem()">+ INSERTAR SERVICIO</button>
+        <button class="btn no-print" style="background:rgba(0,234,255,0.05); color:var(--neon-azul); border:1px dashed var(--neon-azul); font-size: 10px;" onclick="agregarItem()">+ INSERTAR REGISTRO</button>
 
-        <div style="margin-top: 60px; display: flex; justify-content: space-between; align-items: flex-end;">
-            <div style="font-size: 10px; color: #444; max-width: 400px;">
-                * GARANTÍA DE 30 DÍAS SOBRE MANO DE OBRA.<br>
-                * NO APLICA EN EQUIPOS MOJADOS O PREVIAMENTE MANIPULADOS.<br>
-                * EDIMARK TECH SOLUTIONS - 2026.
+        <div style="margin-top: 50px; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div style="font-size: 9px; color: #444; max-width: 350px;">
+                * GARANTÍA DE 30 DÍAS SOBRE EL SERVICIO.<br>
+                * EQUIPOS MOJADOS SIN GARANTÍA.
             </div>
             <div style="text-align: right;">
-                <div class="no-print" style="margin-bottom: 10px;">
-                    <label style="font-size: 12px;"><input type="checkbox" id="iva" onchange="calcular()" style="width:auto"> IVA 16%</label>
+                <div class="no-print" style="margin-bottom: 8px;">
+                    <label style="font-size: 11px;"><input type="checkbox" id="iva" onchange="calcular()" style="width:auto"> IVA</label>
                 </div>
-                <span style="opacity: 0.5; font-size: 14px;">TOTAL FINAL:</span><br>
-                <b style="font-size: 40px; color: var(--neon-rosa);">$<span id="total">0.00</span></b>
+                <span style="opacity: 0.6; font-size: 13px;">TOTAL:</span><br>
+                <b style="font-size: 35px; color: var(--neon-rosa);">$<span id="total">0.00</span></b>
             </div>
         </div>
     </div>
 
-    <div class="no-print" style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <div class="no-print" style="margin-top: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
         <button class="btn btn-save" onclick="guardarRegistro()">💾 GUARDAR</button>
-        <button class="btn btn-pdf" onclick="descargarPDFVertical()">📄 DESCARGAR PDF CARTA</button>
+        <button class="btn btn-pdf" onclick="descargarCartaPDF()">📄 PDF CARTA VERTICAL</button>
     </div>
 
-    <div class="card no-print" style="margin-top: 30px; min-height: auto; border-color: #1f2937;">
-        <h3 style="color:var(--neon-azul); margin-top: 0; font-size: 14px;">HISTORIAL DE REGISTROS</h3>
+    <div class="card no-print" style="margin-top: 25px; border-color: #1f2937;">
+        <h4 style="margin:0 0 10px 0; color:var(--neon-azul); font-size: 12px;">ÚLTIMOS REGISTROS</h4>
         <div id="historial"></div>
     </div>
 </div>
 
 <script>
-    // --- CARGA INICIAL ---
-    window.onload = () => {
+    // --- CONTROL DE CARGA ---
+    window.addEventListener('load', () => {
         setTimeout(() => {
             document.getElementById('loader').style.display = 'none';
-            document.getElementById('main-content').style.opacity = '1';
+            document.getElementById('main-content').style.display = 'block';
         }, 2000);
         agregarItem();
         mostrarHistorial();
-    };
+    });
 
-    let folio = parseInt(localStorage.getItem("f_Carta_V2")) || 1;
-    document.getElementById("folio").innerText = String(folio).padStart(5, '0');
+    let folioNum = parseInt(localStorage.getItem("folio_final_carta")) || 1;
+    document.getElementById("folio").innerText = String(folioNum).padStart(5, '0');
     document.getElementById("fechaActual").innerText = new Date().toLocaleDateString();
 
     function agregarItem(d="", c=1, p=0) {
@@ -186,47 +198,36 @@
             t += (Number(inps[1].value) * Number(inps[2].value));
         });
         if(document.getElementById("iva").checked) t *= 1.16;
-        document.getElementById("total").innerText = t.toLocaleString('es-MX', {minimumFractionDigits: 2});
+        document.getElementById("total").innerText = t.toFixed(2);
     }
 
-    // --- GENERAR PDF VERTICAL TAMAÑO CARTA ---
-    async function descargarPDFVertical() {
+    // --- PDF CARTA VERTICAL ---
+    async function descargarCartaPDF() {
         const overlay = document.getElementById('download-overlay');
         const bar = document.getElementById('p-bar');
         const pText = document.getElementById('p-text');
         const element = document.getElementById('area-nota');
 
         overlay.style.display = 'flex';
-        
-        // Animación de barra
         for(let i = 0; i <= 100; i += 10) {
             bar.style.width = i + '%';
             pText.innerText = i + '%';
             await new Promise(r => setTimeout(r, 60));
         }
 
-        element.classList.add('pdf-render');
+        element.classList.add('pdf-render-zone');
 
         const opt = {
             margin: 0,
-            filename: `EDIMARK_CARTA_${folio}.pdf`,
+            filename: `EDIMARK_CARTA_${folioNum}.pdf`,
             image: { type: 'jpeg', quality: 1 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true, 
-                backgroundColor: '#000000',
-                width: 816, // 8.5 pulgadas x 96 DPI
-                height: 1056 // 11 pulgadas x 96 DPI
-            },
+            html2canvas: { scale: 2, useCORS: true, backgroundColor: '#000000' },
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
 
         html2pdf().set(opt).from(element).save().then(() => {
-            element.classList.remove('pdf-render');
-            setTimeout(() => {
-                overlay.style.display = 'none';
-                bar.style.width = '0%';
-            }, 500);
+            element.classList.remove('pdf-render-zone');
+            overlay.style.display = 'none';
         });
     }
 
@@ -236,29 +237,26 @@
             const inps = tr.querySelectorAll('input');
             items.push({ d: inps[0].value, c: inps[1].value, p: inps[2].value });
         });
-        const data = { f: folio, cl: document.getElementById("cliente").value, tt: document.getElementById("total").innerText, serv: items, fecha: new Date().toLocaleString() };
-        const hist = JSON.parse(localStorage.getItem("h_Carta_V2") || "[]");
+        const data = { f: folioNum, cl: document.getElementById("cliente").value, tt: document.getElementById("total").innerText, serv: items, fecha: new Date().toLocaleString() };
+        const hist = JSON.parse(localStorage.getItem("hist_final_carta") || "[]");
         hist.push(data);
-        localStorage.setItem("h_Carta_V2", JSON.stringify(hist));
-        localStorage.setItem("f_Carta_V2", ++folio);
+        localStorage.setItem("hist_final_carta", JSON.stringify(hist));
+        localStorage.setItem("folio_final_carta", ++folioNum);
         location.reload();
     }
 
     function mostrarHistorial() {
-        const hist = JSON.parse(localStorage.getItem("h_Carta_V2") || "[]");
+        const hist = JSON.parse(localStorage.getItem("hist_final_carta") || "[]");
         document.getElementById("historial").innerHTML = hist.reverse().slice(0, 5).map(n => `
             <div class="hist-item">
-                <div><b style="color:var(--neon-azul)">#${n.f}</b><br><small>${n.cl}</small></div>
-                <div style="text-align:right">
-                    <b>$${n.tt}</b><br>
-                    <button onclick="recuperar(${n.f})" style="font-size:8px; background:none; border:1px solid var(--neon-rosa); color:var(--neon-rosa); padding:4px; margin-top:5px; border-radius:4px; cursor:pointer;">RESTAURAR</button>
-                </div>
+                <div style="font-size:10px"><b>#${n.f}</b> - ${n.cl}</div>
+                <button onclick="recuperar(${n.f})" style="background:none; border:1px solid var(--neon-azul); color:var(--neon-azul); font-size:9px; padding:3px 6px; border-radius:4px; cursor:pointer;">ABRIR</button>
             </div>
         `).join('');
     }
 
     function recuperar(f) {
-        const hist = JSON.parse(localStorage.getItem("h_Carta_V2") || "[]");
+        const hist = JSON.parse(localStorage.getItem("hist_final_carta") || "[]");
         const n = hist.find(x => x.f == f);
         if(!n) return;
         document.getElementById("cliente").value = n.cl;
@@ -268,8 +266,6 @@
         n.serv.forEach(s => agregarItem(s.d, s.c, s.p));
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
-    @keyframes spin { 100% { transform: rotate(360deg); } }
 </script>
 </body>
 </html>

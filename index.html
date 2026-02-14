@@ -199,39 +199,38 @@
         document.getElementById("total").innerText = tot.toLocaleString('en-US', {minimumFractionDigits: 2});
     }
 
-    async function generarPDFMaster() {
-        const area = document.getElementById('area-nota');
-        const pdfClone = area.cloneNode(true);
-        
-        pdfClone.classList.add('pdf-export-mode');
-        
-        // ELIMINAR CONTROLES EN EL PDF
-        const btnAdd = pdfClone.querySelector('#add-row-btn');
-        if(btnAdd) btnAdd.remove();
-        const ivaCtrl = pdfClone.querySelector('#iva-control');
-        if(ivaCtrl) ivaCtrl.remove();
-        
-        // Convertir inputs a texto limpio para el PDF
-        pdfClone.querySelectorAll('input').forEach(inp => {
-            const span = document.createElement('span');
-            span.innerText = inp.value || "---";
-            span.style.color = "#00eaff";
-            span.style.fontWeight = "600";
-            inp.replaceWith(span);
-        });
+function generarPDFMaster() {
 
-        const opt = {
-            margin: 0,
-            filename: `EDIMARK_FOLIO_${folioNum}.pdf`,
-            html2canvas: { scale: 3, useCORS: true, backgroundColor: '#030508' },
-            jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
-        };
+    const area = document.getElementById('area-nota');
+    const pdfClone = area.cloneNode(true);
 
-        const worker = html2pdf().set(opt).from(pdfClone);
-        worker.save();
-        worker.toPdf().output('bloburl').then((url) => {
-            window.open(url, '_blank');
-        });
+    pdfClone.classList.add('pdf-export-mode');
+
+    const btnAdd = pdfClone.querySelector('#add-row-btn');
+    if (btnAdd) btnAdd.remove();
+
+    const ivaCtrl = pdfClone.querySelector('#iva-control');
+    if (ivaCtrl) ivaCtrl.remove();
+
+    pdfClone.querySelectorAll('input').forEach(function(inp) {
+        const span = document.createElement('span');
+        span.innerText = inp.value || "---";
+        span.style.color = "#00eaff";
+        span.style.fontWeight = "600";
+        inp.parentNode.replaceChild(span, inp);
+    });
+
+    const opt = {
+        margin: 0,
+        filename: "EDIMARK_FOLIO_" + folioNum + ".pdf",
+        html2canvas: { scale: 3, useCORS: true, backgroundColor: '#030508' },
+        jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(pdfClone).save();
+
+
+
     }
 
     function guardarRegistro() {
@@ -253,15 +252,30 @@
         location.reload();
     }
 
-    function cargarHistorial() {
-        const hist = JSON.parse(localStorage.getItem("h_v10") || "[]");
-        document.getElementById("historial").innerHTML = hist.reverse().slice(0, 5).map(n => `
-            <div class="hist-item">
-                <div><b>#${String(n.f).padStart(5,'0')}</b> - ${n.cl || 'S/N'}</div>
-                <button onclick="restaurar(${n.f})" style="background:none; border:1px solid var(--neon-azul); color:var(--neon-azul); font-size:10px; padding:5px 10px; border-radius:4px; cursor:pointer;">ABRIR</button>
+function cargarHistorial() {
+    let hist = JSON.parse(localStorage.getItem("h_v10") || "[]");
+
+    // Evita romper el array original sin usar spread
+    hist = hist.slice().reverse();
+
+    document.getElementById("historial").innerHTML = hist.slice(0, 5).map(n => `
+        <div class="hist-item">
+            <div><b>#${String(n.f).padStart(5,'0')}</b> - ${n.cl || 'S/N'}</div>
+            <div style="display:flex; gap:6px;">
+                <button onclick="restaurar(${n.f})"
+                    style="background:none; border:1px solid var(--neon-azul); color:var(--neon-azul); font-size:10px; padding:5px 10px; border-radius:4px; cursor:pointer;">
+                    ABRIR
+                </button>
+
+                <button onclick="eliminarNota(${n.f})"
+                    style="background:none; border:1px solid #ff0040; color:#ff0040; font-size:10px; padding:5px 10px; border-radius:4px; cursor:pointer;">
+                    ELIMINAR
+                </button>
             </div>
-        `).join('');
-    }
+        </div>
+    `).join('');
+}
+
 
     function restaurar(f) {
         const hist = JSON.parse(localStorage.getItem("h_v10") || "[]");
@@ -277,7 +291,21 @@
         n.serv.forEach(s => agregarItem(s.d, s.c, s.p));
         calcular();
         window.scrollTo({ top: 0, behavior: 'smooth' });
+
     }
+
+function eliminarNota(folio) {
+    if (!confirm("¿Seguro que deseas eliminar esta nota? Esta acción no se puede deshacer.")) {
+        return;
+    }
+
+    let hist = JSON.parse(localStorage.getItem("h_v10") || "[]");
+    hist = hist.filter(n => n.f !== folio);
+    localStorage.setItem("h_v10", JSON.stringify(hist));
+
+    cargarHistorial();
+}
+
 </script>
 </body>
 </html>
